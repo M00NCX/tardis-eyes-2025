@@ -110,14 +110,14 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden bg-background">
+    <div className="relative h-full w-full overflow-hidden bg-background">
       <Header currentPlanet={currentPlanet} />
       <PlanetNavigation
         currentPlanet={currentPlanet}
         onPlanetChange={handlePlanetChange}
       />
 
-      <div className="w-full h-[calc(100vh-4rem)] relative">
+      <div className="w-full h-[calc(100vh-6.1rem)] relative">
         <MapComponentWithNoSSR
           currentPlanet={currentPlanet}
           annotations={annotations}
@@ -148,7 +148,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
           <Button
             variant="outline"
             size="icon"
-            className="fixed bottom-8 left-4 shadow-lg bg-card/80 backdrop-blur"
+            className="fixed bottom-8 left-7 shadow-lg bg-card/80 backdrop-blur"
             onClick={() => setIsPanelVisible(!isPanelVisible)}
             aria-label={isPanelVisible ? 'Esconder painel' : 'Mostrar painel'}
           >

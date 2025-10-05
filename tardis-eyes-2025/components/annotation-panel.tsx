@@ -40,8 +40,8 @@ export function AnnotationPanel({
   return (
     <div
       className={cn(
-        'fixed top-[calc(4rem+1rem)] left-4 z-[1000] bg-card/90 shadow-2xl backdrop-blur transition-transform duration-300 ease-in-out supports-[backdrop-filter]:bg-card/70 rounded-lg border border-border',
-        'h-[calc(100vh-6rem)] w-80 max-w-[90vw]', // Tamanho e posição
+        'fixed top-[calc(4rem+2rem)] left-7 z-[1000] bg-card/90 shadow-2xl backdrop-blur transition-transform duration-300 ease-in-out supports-[backdrop-filter]:bg-card/70 rounded-lg border border-border',
+        'h-[calc(100vh-8rem)] w-80 max-w-[90vw]', // Tamanho e posição
         open ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)]' // Animação de entrada/saída
       )}
     >
