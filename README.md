@@ -1,6 +1,3 @@
-Claro! Aqui está o conteúdo que você me enviou formatado no estilo de um **README.md** pronto para copiar e colar:
-
-````markdown
 # TARDIS Atlas 🚀
 
 Explore a Lua, Marte e a Terra como nunca antes. Crie anotações, faça tours guiados e compartilhe suas descobertas.
@@ -78,6 +75,7 @@ Clone o repositório:
 git clone [link-para-seu-repositorio]
 cd tardis-atlas
 ```
+
 ````
 
 Instale as dependências:
@@ -132,6 +130,4 @@ Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais de
 
 Desenvolvido com ❤️ pela equipe <b>TARDIS</b>.
 
-```
-
-```
+````
