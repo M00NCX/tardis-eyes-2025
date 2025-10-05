@@ -1,4 +1,3 @@
-/* Estilos base para todos os marcadores personalizados */
 .custom-marker {
   background: none !important;
   border: none !important;
@@ -6,11 +5,9 @@
 }
 
 .custom-marker img {
-  /* --- CORREÇÃO APLICADA AQUI --- */
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Garante que a imagem se ajuste sem distorcer */
-  /* --- FIM DA CORREÇÃO --- */
+  object-fit: contain;
 
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
   transform-origin: center;
@@ -60,7 +57,7 @@
 }
 
 .marker-pulse::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: -8px;
   border-radius: 50%;

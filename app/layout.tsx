@@ -15,12 +15,11 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-// Metadata permanece no Server Component
 export const metadata: Metadata = {
   title: 'TARDIS Voyager',
   description:
     'Explore imagens de alta resolução da Lua, Terra e Marte capturadas pela NASA',
-  generator: 'v0.app',
+  generator: 'TARDIS',
   icons: {
     icon: '/logo.png',
     shortcut: '/favicon.ico',
