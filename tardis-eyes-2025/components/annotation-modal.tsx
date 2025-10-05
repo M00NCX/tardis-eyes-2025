@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,11 +10,11 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 interface AnnotationModalProps {
   open: boolean;
@@ -33,16 +33,16 @@ export function AnnotationModal({
   onSubmit,
   position,
 }: AnnotationModalProps) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [author, setAuthor] = useState("");
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [author, setAuthor] = useState('');
 
   // Limpa os campos quando o modal é fechado
   useEffect(() => {
     if (!open) {
-      setTitle("");
-      setDescription("");
-      setAuthor("");
+      setTitle('');
+      setDescription('');
+      setAuthor('');
     }
   }, [open]);
 
@@ -55,7 +55,7 @@ export function AnnotationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="top-[30%] translate-y-[-50%] max-w-md mx-auto">
+      <DialogContent className="top-[50%] translate-y-[-50%] max-w-md mx-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             {/* CORREÇÃO: Textos mais diretos e claros */}
@@ -67,7 +67,7 @@ export function AnnotationModal({
               marcada com a bandeira no mapa.
               {position && (
                 <div className="mt-2 p-2 bg-muted rounded text-sm font-mono">
-                  📍 Posição: {position.lat.toFixed(4)},{" "}
+                  📍 Posição: {position.lat.toFixed(4)},{' '}
                   {position.lng.toFixed(4)}
                 </div>
               )}
