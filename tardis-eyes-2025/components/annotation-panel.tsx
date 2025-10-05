@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Card } from "@/components/ui/card";
-import { MapPin, User, Calendar, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Button } from "./ui/button";
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Card } from '@/components/ui/card';
+import { MapPin, User, Calendar, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Button } from './ui/button';
 
 // --- Tipos de Dados ---
 interface Annotation {
@@ -40,9 +40,9 @@ export function AnnotationPanel({
   return (
     <div
       className={cn(
-        "fixed top-[calc(4rem+1rem)] left-4 z-[1000] bg-card/90 shadow-2xl backdrop-blur transition-transform duration-300 ease-in-out supports-[backdrop-filter]:bg-card/70 rounded-lg border border-border",
-        "h-[calc(100vh-6rem)] w-80 max-w-[90vw]", // Tamanho e posição
-        open ? "translate-x-0" : "-translate-x-[calc(100%+2rem)]" // Animação de entrada/saída
+        'fixed top-[calc(4rem+1rem)] left-4 z-[1000] bg-card/90 shadow-2xl backdrop-blur transition-transform duration-300 ease-in-out supports-[backdrop-filter]:bg-card/70 rounded-lg border border-border',
+        'h-[calc(100vh-6rem)] w-80 max-w-[90vw]', // Tamanho e posição
+        open ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)]' // Animação de entrada/saída
       )}
     >
       <div className="flex h-full flex-col overflow-hidden">
@@ -90,11 +90,11 @@ export function AnnotationPanel({
                     <div
                       className={`rounded-full px-2 py-0.5 text-xs ${
                         annotation.is_historical
-                          ? "bg-blue-100 text-blue-800"
-                          : "bg-green-100 text-green-800"
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-green-100 text-green-800'
                       }`}
                     >
-                      {annotation.is_historical ? "Marco" : "Comunidade"}
+                      {annotation.is_historical ? 'Marco' : 'Comunidade'}
                     </div>
                   </div>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
@@ -109,7 +109,7 @@ export function AnnotationPanel({
                       <Calendar className="h-3 w-3" />
                       <span>
                         {new Date(annotation.created_at).toLocaleDateString(
-                          "pt-BR"
+                          'pt-BR'
                         )}
                       </span>
                     </div>
