@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
+export const dynamic = 'force-dynamic';
 interface TourPoint {
   id: string;
   lat: number;
@@ -232,8 +232,9 @@ const allTourPoints: TourPoint[] = [
 ];
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const planet = searchParams.get('planet') as 'moon' | 'mars' | 'earth' | null;
+  // Usando a forma recomendada para pegar os parâmetros
+  const { searchParams } = request.nextUrl;
+  const planet = searchParams.get('planet');
 
   if (planet) {
     const filteredPoints = allTourPoints.filter(
@@ -242,6 +243,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(filteredPoints);
   }
 
-  // Retorna todos se nenhum planeta for especificado
-  return NextResponse.json(allTourPoints);
+  return NextResponse.json(
+    { error: "O parâmetro 'planet' é obrigatório." },
+    { status: 400 }
+  );
 }
