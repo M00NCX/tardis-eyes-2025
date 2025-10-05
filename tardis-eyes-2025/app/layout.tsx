@@ -1,26 +1,31 @@
-import type React from "react";
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-import "./marker-styles.css";
+import type React from 'react';
+import type { Metadata } from 'next';
+import { Geist, Geist_Mono } from 'next/font/google';
+import './globals.css';
+import './marker-styles.css';
 
 // Configuração das fontes
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+  variable: '--font-geist-sans',
+  subsets: ['latin'],
 });
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  variable: '--font-geist-mono',
+  subsets: ['latin'],
 });
 
 // Metadata permanece no Server Component
 export const metadata: Metadata = {
-  title: "NASA Explorer - Mars Reconnaissance Orbiter",
+  title: 'TARDIS Voyager',
   description:
-    "Explore imagens de alta resolução de Marte capturadas pela Mars Reconnaissance Orbiter",
-  generator: "v0.app",
+    'Explore imagens de alta resolução da Lua, Terra e Marte capturadas pela NASA',
+  generator: 'v0.app',
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/favicon.ico',
+    apple: '/logo.png',
+  },
 };
 
 export default function RootLayout({

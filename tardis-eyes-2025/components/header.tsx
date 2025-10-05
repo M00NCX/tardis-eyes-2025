@@ -4,6 +4,7 @@ import { Rocket, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
 import { InfoModal } from './info-modal';
+import Image from 'next/image';
 
 interface HeaderProps {
   currentPlanet: 'moon' | 'mars' | 'earth';
@@ -24,10 +25,10 @@ export function Header({ currentPlanet }: HeaderProps) {
         <div className="flex h-16 items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-              <Rocket className="h-5 w-5 text-primary-foreground" />
+              <Image src="/logo.png" width={500} height={500} alt="logo" />
             </div>
             <h1 className="text-lg font-semibold">
-              TARDIS Eyes - {planetNames[currentPlanet]}
+              TARDIS Voyager - {planetNames[currentPlanet]}
             </h1>
           </div>
           <div className="flex items-center gap-2">

@@ -47,7 +47,7 @@ export function AnnotationPanel({
         open ? 'translate-x-0' : '-translate-x-[calc(100%+2rem)]' // Animação de entrada/saída
       )}
     >
-      <div className="flex h-full flex-col overflow-hidden">
+      <div className="flex flex-col h-full">
         <div className="border-b border-border p-4 shrink-0 relative">
           <h2 className="text-lg font-semibold text-foreground">
             Anotações e Marcos
@@ -55,7 +55,6 @@ export function AnnotationPanel({
           <p className="text-sm text-muted-foreground">
             {sortedAnnotations.length} pontos de interesse
           </p>
-          {/* --- NOVO BOTÃO DE FECHAR --- */}
           <Button
             variant="ghost"
             size="icon"
@@ -67,7 +66,9 @@ export function AnnotationPanel({
           </Button>
         </div>
 
-        <ScrollArea className="flex-1">
+        <ScrollArea className="h-[calc(100%-68px)]">
+          {' '}
+          {/* altura do cabeçalho */}
           <div className="space-y-3 p-4">
             {sortedAnnotations.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
@@ -79,9 +80,9 @@ export function AnnotationPanel({
                 </p>
               </div>
             ) : (
-              sortedAnnotations.map((annotation) => (
+              [...sortedAnnotations].map((annotation, index) => (
                 <Card
-                  key={annotation.id}
+                  key={`${annotation.id}-${index}`}
                   className="group cursor-pointer border-border bg-card/50 p-3 transition-all hover:bg-card hover:shadow-md hover:border-primary/50"
                   onClick={() => onSelectAnnotation(annotation)}
                 >
