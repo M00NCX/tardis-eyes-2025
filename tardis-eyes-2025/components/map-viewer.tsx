@@ -51,6 +51,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
     status: 'idle',
   });
   const [isPanelVisible, setIsPanelVisible] = useState(true);
+  const allPointsToDisplay = [...annotations, ...tourPoints];
 
   const fetchData = useCallback(async () => {
     try {
@@ -91,7 +92,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
 
   const onAnimationComplete = (position: L.LatLng) => {
     setAnimationState({ status: 'placing_flag', at: position });
-    setAnimationState({ status: 'idle'});
+    setAnimationState({ status: 'idle' });
   };
 
   // 1. CORREÇÃO: A função handleCreateAnnotation foi removida daqui.
@@ -120,7 +121,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
       <div className="w-full h-[calc(100vh-6.1rem)] relative">
         <MapComponentWithNoSSR
           currentPlanet={currentPlanet}
-          annotations={annotations}
+          annotations={allPointsToDisplay}
           onSelectPositionForAnnotation={handleSelectPositionForAnnotation}
           onSelectAnnotation={handleSelectAnnotation}
           highlightedAnnotationId={highlightedAnnotationId}
@@ -178,7 +179,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
       </div>
 
       {/* 2. CORREÇÃO: Passando as props corretas para o Modal */}
-      
+
       <AnnotationModal
         open={showAnnotationModal}
         onOpenChange={(isOpen) => {
@@ -194,8 +195,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
             : null
         }
         planet={currentPlanet}
-      /> 
-     
+      />
     </div>
   );
 }
