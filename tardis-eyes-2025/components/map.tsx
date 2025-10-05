@@ -32,6 +32,7 @@ function MapLayer({
     const tileLayer = L.tileLayer(planetConfig.tileUrl, {
       attribution: planetConfig.attribution,
       maxZoom: planetConfig.maxZoom,
+      maxNativeZoom: planetConfig.maxZoom,
       noWrap: planetConfig.noWrap,
     });
 
@@ -82,6 +83,8 @@ export function Map({
     <MapContainer
       center={planetConfig.center}
       zoom={planetConfig.zoom}
+      minZoom={planetConfig.minZoom}
+      maxZoom={planetConfig.maxZoom}
       className="w-full h-full"
     >
       <MapLayer currentPlanet={currentPlanet} />

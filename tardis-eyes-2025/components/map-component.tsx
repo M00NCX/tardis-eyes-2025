@@ -83,6 +83,12 @@ export default function MapComponent({
         preferCanvas: true,
         minZoom: config.minZoom,
         maxZoom: config.maxZoom,
+      
+        // Controle de zoom
+        zoomSnap: 0.5,             // zoom em passos inteiros
+        zoomDelta: 0.5,            // cada rolagem do scroll
+        wheelPxPerZoomLevel: 180,  // suavidade do zoom
+      
         maxBounds: config.bounds ? L.latLngBounds(config.bounds) : undefined,
         maxBoundsViscosity: 1.0,
       }).setView(config.center, config.zoom);

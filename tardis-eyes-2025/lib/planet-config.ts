@@ -20,9 +20,9 @@ interface PlanetConfigs {
 export const planetConfigs: PlanetConfigs = {
   moon: {
     center: [0, 0],
-    zoom: 3,
-    minZoom: 1,
-    maxZoom: 12,
+    zoom: 0.5,
+    minZoom: 3,
+    maxZoom: 8,
     // Usar o mosaic WAC global (formato {z}/{y}/{x} compatível com Leaflet)
     tileUrl:
       "https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
@@ -39,9 +39,9 @@ export const planetConfigs: PlanetConfigs = {
   },
   mars: {
     center: [0, 0],
-    zoom: 3,
-    minZoom: 1,
-    maxZoom: 12,
+    zoom: 0.5,
+    minZoom: 3,
+    maxZoom: 6,
     // Mapa base global colorido (MOLA)
     tileUrl:
       "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
@@ -61,9 +61,9 @@ export const planetConfigs: PlanetConfigs = {
   },  
   earth: {
     center: [0, 0],
-    zoom: 3,
-    minZoom: 1,
-    maxZoom: 13,
+    zoom: 0.5,
+    minZoom: 3,
+    maxZoom: 8,
     tileUrl:
       "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
     fallbackTileUrl:
