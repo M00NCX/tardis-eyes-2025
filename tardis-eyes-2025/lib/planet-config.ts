@@ -25,7 +25,7 @@
       maxZoom: 8,
       tileUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`,
       fallbackTileUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`,
-      labelUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Moon/EQ/LRO_NAC_Nomenclature/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`,
+      labelUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`,
       attribution: "© NASA/GSFC/ASU - Lunar Reconnaissance Orbiter",
       noWrap: true,
       bounds: [
@@ -41,7 +41,7 @@
       maxZoom: 6,
       tileUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`,
       fallbackTileUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`,
-      labelUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Mars/EQ/Mars_MOLA_Nomenclature/1.0.0/default/default028mm/{z}/{y}/{x}.png`,
+      labelUrl: `/api/proxy?url=https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg`,
       attribution: "© NASA/JPL/USGS - Mars Reconnaissance Orbiter (MOLA, Viking, HiRISE)",
       noWrap: true,
       bounds: [

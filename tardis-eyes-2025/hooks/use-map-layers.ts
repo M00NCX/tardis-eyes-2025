@@ -116,7 +116,7 @@ export function useMapLayers({
         bounds: config.bounds ? L.latLngBounds(config.bounds) : undefined,
         noWrap: config.noWrap,
         attribution: config.attribution,
-        opacity: 0.7,
+        opacity: 0,
         crossOrigin: true,
         ...(config as any).layerOptions,
         pane: "labelTiles",
