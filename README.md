@@ -1,4 +1,4 @@
-# TARDIS Atlas 🚀
+# TARDIS - NASA SPACE APP CHALLENGE 2025 🚀
 
 Explore a Lua, Marte e a Terra como nunca antes. Crie anotações, faça tours guiados e compartilhe suas descobertas.
 
@@ -6,7 +6,7 @@ Explore a Lua, Marte e a Terra como nunca antes. Crie anotações, faça tours g
 
 ## 📄 Sobre o Projeto
 
-O **TARDIS Atlas** é uma aplicação web interativa, inspirada na exploração espacial e no espírito de equipe da **TARDIS Foguetemodelismo**. Nossa plataforma permite que usuários explorem mapas detalhados e de alta resolução da Lua, Marte e Terra, oferecendo uma experiência imersiva e educativa.
+O **TARDIS Atlas** é uma aplicação web interativa, inspirada na exploração espacial e no espírito de equipe da **TARDIS**. Nossa plataforma permite que usuários explorem mapas detalhados e de alta resolução da Lua, Marte e Terra, oferecendo uma experiência imersiva e educativa.
 
 Os exploradores podem navegar por marcos históricos, como os locais de pouso das missões Apollo e as rotas dos rovers marcianos, ou deixar suas próprias marcas, criando anotações e compartilhando pontos de interesse com a comunidade.
 
