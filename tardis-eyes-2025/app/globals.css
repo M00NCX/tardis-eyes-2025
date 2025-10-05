@@ -1,11 +1,13 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./marker-styles.css";
 
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Tornar tema claro: fundo branco e texto escuro */
+  --background: #ffffff;
+  --foreground: #0f1720; /* tom escuro para alto contraste */
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -89,20 +91,21 @@
 
 /* Fixed Leaflet styles to use CSS variables instead of theme() function */
 .leaflet-container {
-  background: #000000 !important;
+  /* Background do mapa agora branco para combinar com o tema claro */
+  background: #ffffff !important;
   font-family: var(
     --font-sans,
     -apple-system,
     BlinkMacSystemFont,
-    'Segoe UI',
+    "Segoe UI",
     sans-serif
   );
 }
 
 .leaflet-control-zoom a {
-  background-color: var(--color-card) !important;
-  color: var(--color-foreground) !important;
-  border: 1px solid var(--color-border) !important;
+  background-color: var(--color-card, #ffffff) !important;
+  color: var(--color-foreground, #0f1720) !important;
+  border: 1px solid var(--color-border, #e5e7eb) !important;
 }
 
 .leaflet-control-zoom a:hover {
@@ -110,10 +113,10 @@
 }
 
 .leaflet-popup-content-wrapper {
-  background: var(--color-card) !important;
-  color: var(--color-foreground) !important;
-  border-radius: var(--radius) !important;
-  border: 1px solid var(--color-border) !important;
+  background: var(--color-card, #ffffff) !important;
+  color: var(--color-foreground, #0f1720) !important;
+  border-radius: var(--radius, 0.625rem) !important;
+  border: 1px solid var(--color-border, #e5e7eb) !important;
 }
 
 .leaflet-popup-tip {

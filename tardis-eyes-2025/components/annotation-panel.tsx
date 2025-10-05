@@ -1,14 +1,15 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { ScrollArea } from '@/components/ui/scroll-area';
-import { Card } from '@/components/ui/card';
-import { MapPin, User, Calendar, PlusCircle } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Textarea } from './ui/textarea';
-import { Label } from './ui/label';
+import { useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Card } from "@/components/ui/card";
+import { MapPin, User, Calendar, PlusCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import { Label } from "./ui/label";
 
 // --- Tipos de Dados ---
 interface Annotation {
@@ -19,9 +20,10 @@ interface Annotation {
   description: string;
   author: string;
   created_at: string;
+  is_historical?: boolean;
 }
 
-// --- Componente do Formulário de Criação (extraído do antigo modal) ---
+// --- Componente do Formulário de Criação ---
 const CreateAnnotationForm = ({
   onCancel,
   onCreate,
@@ -35,9 +37,9 @@ const CreateAnnotationForm = ({
   }) => void;
   position: { lat: number; lng: number } | null;
 }) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [author, setAuthor] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [author, setAuthor] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +49,12 @@ const CreateAnnotationForm = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex h-full flex-col">
+    <form
+      onSubmit={handleSubmit}
+      className="flex h-full flex-col gap-4 p-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80"
+    >
       <div className="border-b border-border p-4 shrink-0">
         <h2 className="text-lg font-semibold text-foreground">Nova Anotação</h2>
-        {/* ALTERAÇÃO: Exibe as coordenadas do ponto clicado */}
         {position && (
           <p className="text-sm text-muted-foreground font-mono">
             Lat: {position.lat.toFixed(4)}, Lng: {position.lng.toFixed(4)}
@@ -105,14 +109,14 @@ interface AnnotationPanelProps {
   annotations: Annotation[];
   onSelectAnnotation: (annotation: Annotation) => void;
   open: boolean;
-  mode: 'list' | 'create';
-  onModeChange: (mode: 'list' | 'create') => void;
+  mode: "list" | "create";
+  onModeChange: (mode: "list" | "create") => void;
   onCreateAnnotation: (data: {
     title: string;
     description: string;
     author: string;
   }) => void;
-  position: { lat: number; lng: number } | null; // ALTERAÇÃO: Recebe a posição
+  position: { lat: number; lng: number } | null;
 }
 
 export function AnnotationPanel({
@@ -124,21 +128,26 @@ export function AnnotationPanel({
   onCreateAnnotation,
   position,
 }: AnnotationPanelProps) {
+  const isMobile = useIsMobile();
+
   return (
     <div
       className={cn(
-        'h-full border-l border-border bg-card/95 shadow-2xl backdrop-blur transition-all duration-300 supports-[backdrop-filter]:bg-card/80',
-        open ? 'w-80' : 'w-0 p-0 border-none'
+        "fixed z-[1000] bg-card/95 shadow-2xl backdrop-blur transition-all duration-300 supports-[backdrop-filter]:bg-card/80",
+        isMobile
+          ? "bottom-0 left-0 right-0 border-t border-border"
+          : "top-0 right-0 border-l border-border h-full",
+        isMobile ? (open ? "h-[40vh]" : "h-0") : open ? "w-80" : "w-0",
+        !open && "border-none"
       )}
     >
       <div
         className={cn(
-          'flex h-full flex-col overflow-hidden',
-          !open && 'invisible'
+          "flex h-full flex-col overflow-hidden",
+          !open && "invisible"
         )}
       >
-        {/* Renderização Condicional: ou a lista ou o formulário */}
-        {mode === 'list' ? (
+        {mode === "list" ? (
           <>
             <div className="border-b border-border p-4 shrink-0">
               <div className="flex justify-between items-center">
@@ -147,14 +156,14 @@ export function AnnotationPanel({
                     Anotações
                   </h2>
                   <p className="text-sm text-muted-foreground">
-                    {annotations.length}{' '}
-                    {annotations.length === 1 ? 'anotação' : 'anotações'}
+                    {annotations.length}{" "}
+                    {annotations.length === 1 ? "anotação" : "anotações"}
                   </p>
                 </div>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={() => onModeChange('create')}
+                  onClick={() => onModeChange("create")}
                 >
                   <PlusCircle className="h-5 w-5" />
                 </Button>
@@ -176,26 +185,47 @@ export function AnnotationPanel({
                   annotations.map((annotation) => (
                     <Card
                       key={annotation.id}
-                      className="cursor-pointer border-border bg-card p-3 transition-all hover:border-primary hover:shadow-lg"
+                      className={cn(
+                        "group cursor-pointer border-border bg-card/50 p-4 transition-all",
+                        "hover:bg-card hover:shadow-lg hover:scale-[1.02]",
+                        "active:scale-[0.98]",
+                        "backdrop-blur supports-[backdrop-filter]:bg-card/30"
+                      )}
                       onClick={() => onSelectAnnotation(annotation)}
                     >
-                      <h3 className="mb-2 font-semibold text-foreground">
-                        {annotation.title}
-                      </h3>
-                      <p className="mb-3 text-sm text-muted-foreground line-clamp-2">
+                      <div className="flex items-start justify-between gap-2">
+                        <h3 className="font-semibold text-foreground group-hover:text-primary">
+                          {annotation.title}
+                        </h3>
+                        <div className="rounded-full bg-primary/10 px-2 py-0.5 text-xs text-primary">
+                          {annotation.is_historical
+                            ? "Histórico"
+                            : "Comunidade"}
+                        </div>
+                      </div>
+                      <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
                         {annotation.description}
                       </p>
-                      <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <User className="h-3 w-3" />
-                          <span>{annotation.author}</span>
+                      <div className="mt-3 flex items-center justify-between text-xs">
+                        <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <User className="h-3 w-3" />
+                            <span>{annotation.author}</span>
+                          </div>
+                          <div className="flex items-center gap-1 text-muted-foreground">
+                            <Calendar className="h-3 w-3" />
+                            <span>
+                              {new Date(
+                                annotation.created_at
+                              ).toLocaleDateString("pt-BR")}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-3 w-3" />
+                        <div className="flex items-center gap-1 text-muted-foreground">
+                          <MapPin className="h-3 w-3" />
                           <span>
-                            {new Date(annotation.created_at).toLocaleDateString(
-                              'pt-BR'
-                            )}
+                            {annotation.lat.toFixed(2)},{" "}
+                            {annotation.lng.toFixed(2)}
                           </span>
                         </div>
                       </div>
@@ -207,9 +237,9 @@ export function AnnotationPanel({
           </>
         ) : (
           <CreateAnnotationForm
-            onCancel={() => onModeChange('list')}
+            onCancel={() => onModeChange("list")}
             onCreate={onCreateAnnotation}
-            position={position} // ALTERAÇÃO: Passa a posição para o formulário
+            position={position}
           />
         )}
       </div>
