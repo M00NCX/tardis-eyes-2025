@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { Rocket, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
-import { InfoModal } from "./info-modal";
+import { Rocket, Info } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useState } from 'react';
+import { InfoModal } from './info-modal';
 
 interface HeaderProps {
-  currentPlanet: "moon" | "mars" | "earth";
+  currentPlanet: 'moon' | 'mars' | 'earth';
 }
 
 export function Header({ currentPlanet }: HeaderProps) {
   const [showInfo, setShowInfo] = useState(false);
 
   const planetNames = {
-    moon: "Lua",
-    mars: "Marte",
-    earth: "Terra"
+    moon: 'Lua',
+    mars: 'Marte',
+    earth: 'Terra',
   };
 
   return (
@@ -26,7 +26,9 @@ export function Header({ currentPlanet }: HeaderProps) {
             <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
               <Rocket className="h-5 w-5 text-primary-foreground" />
             </div>
-            <h1 className="text-lg font-semibold">TARDIS Eyes - {planetNames[currentPlanet]}</h1>
+            <h1 className="text-lg font-semibold">
+              TARDIS Eyes - {planetNames[currentPlanet]}
+            </h1>
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -41,7 +43,7 @@ export function Header({ currentPlanet }: HeaderProps) {
           </div>
         </div>
       </header>
-      {showInfo && <InfoModal onClose={() => setShowInfo(false)} />}
+      <InfoModal open={showInfo} onOpenChange={setShowInfo} />
     </>
   );
 }
