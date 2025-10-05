@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TourPoint {
   id: string;
@@ -20,7 +20,10 @@ interface TourControlProps {
   onSelectPoint: (point: TourPoint) => void;
 }
 
-export function TourControl({ tourPoints, onSelectPoint }: TourControlProps) {
+export function TourControl({
+  tourPoints = [],
+  onSelectPoint,
+}: TourControlProps) {
   const [isActive, setIsActive] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -41,14 +44,22 @@ export function TourControl({ tourPoints, onSelectPoint }: TourControlProps) {
   };
 
   const handleStart = () => {
+    if (sortedPoints.length === 0) return;
     setIsActive(true);
     setCurrentIndex(0);
-    if (sortedPoints[0]) {
-      onSelectPoint(sortedPoints[0]);
-    }
+    onSelectPoint(sortedPoints[0]);
   };
 
-  if (sortedPoints.length === 0) return null;
+  if (sortedPoints.length === 0) {
+    return (
+      <div className="absolute bottom-4 left-1/2 z-[1000] -translate-x-1/2">
+        <Button size="lg" className="shadow-lg" disabled>
+          <Play className="mr-2 h-4 w-4" />
+          Tour Guiado Indisponível
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="absolute bottom-4 left-1/2 z-[1000] -translate-x-1/2">
@@ -58,9 +69,9 @@ export function TourControl({ tourPoints, onSelectPoint }: TourControlProps) {
           Iniciar Tour Guiado
         </Button>
       ) : (
-        <Card className="w-96 border-border bg-card/95 p-4 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <Card className="w-96 max-w-[90vw] border-border bg-card/95 p-4 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-card/80">
           <div className="mb-3 flex items-start justify-between">
-            <div className="flex-1">
+            <div className="flex-1 pr-2">
               <div className="mb-1 text-xs text-muted-foreground">
                 Ponto {currentIndex + 1} de {sortedPoints.length}
               </div>
@@ -72,23 +83,18 @@ export function TourControl({ tourPoints, onSelectPoint }: TourControlProps) {
               variant="ghost"
               size="icon"
               onClick={() => setIsActive(false)}
-              className="h-8 w-8"
+              className="h-8 w-8 flex-shrink-0"
             >
               <X className="h-4 w-4" />
             </Button>
           </div>
 
-          <p className="mb-4 text-sm text-muted-foreground">
+          <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
             {currentPoint?.description}
           </p>
 
           <div className="flex items-center justify-between">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePrevious}
-              disabled={sortedPoints.length <= 1}
-            >
+            <Button variant="outline" size="sm" onClick={handlePrevious}>
               <ChevronLeft className="h-4 w-4" />
             </Button>
 
@@ -97,21 +103,16 @@ export function TourControl({ tourPoints, onSelectPoint }: TourControlProps) {
                 <div
                   key={index}
                   className={cn(
-                    'h-1.5 w-1.5 rounded-full transition-all',
+                    "h-1.5 w-1.5 rounded-full transition-all",
                     index === currentIndex
-                      ? 'w-4 bg-primary'
-                      : 'bg-muted-foreground/30'
+                      ? "w-4 bg-primary"
+                      : "bg-muted-foreground/30"
                   )}
                 />
               ))}
             </div>
 
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleNext}
-              disabled={sortedPoints.length <= 1}
-            >
+            <Button variant="outline" size="sm" onClick={handleNext}>
               <ChevronRight className="h-4 w-4" />
             </Button>
           </div>

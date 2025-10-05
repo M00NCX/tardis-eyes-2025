@@ -1,12 +1,12 @@
 interface PlanetConfig {
   center: [number, number];
   zoom: number;
-  tileUrl: string;
   maxZoom: number;
+  minZoom?: number;
+  tileUrl: string;
   attribution: string;
   bounds?: [number, number][];
   noWrap?: boolean;
-  tms?: boolean;
 }
 
 interface PlanetConfigs {
@@ -19,32 +19,35 @@ export const planetConfigs: PlanetConfigs = {
   moon: {
     center: [0, 0],
     zoom: 2,
-    tileUrl:
-      "https://cartocdn-gusc.global.ssl.fastly.net/opmbuilder/api/v1/map/named/opm-moon-basemap-v0-1/all/{z}/{x}/{y}.png",
+    minZoom: 1,
     maxZoom: 8,
-    attribution: "© OpenPlanetary",
+    // URL oficial do WMTS da NASA para a Lua
+    tileUrl:
+      "https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
+    attribution: "© NASA / GSFC / ASU",
+    noWrap: true,
   },
   mars: {
     center: [0, 0],
     zoom: 2,
-    tileUrl:
-      "https://api.nasa.gov/mars-wmts/catalog/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
+    minZoom: 1,
     maxZoom: 8,
-    attribution: "© NASA",
-    bounds: [
-      [-90, -180],
-      [90, 180],
-    ],
+    // URL oficial do Mars Reconnaissance Orbiter da NASA
+    tileUrl:
+      "https://api.nasa.gov/mars-wmts/mars/Mars_MGS_MOLA_DEM_mosaic_global_463m/default/default028mm/{z}/{y}/{x}.png?api_key=DEMO_KEY",
+    attribution: "© NASA / JPL / USGS",
     noWrap: true,
-    tms: false,
   },
   earth: {
     center: [0, 0],
     zoom: 2,
+    minZoom: 1,
+    maxZoom: 9,
+    // URL oficial do NASA GIBS (Global Imagery Browse Services)
     tileUrl:
-      "https://gibs.earthdata.nasa.gov/wmts/epsg4326/best/BlueMarble_ShadedRelief_Bathymetry/default/{date}/EPSG4326_500m/{z}/{y}/{x}.jpeg",
-    maxZoom: 8,
-    attribution: "© NASA",
+      "https://gibs-{s}.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+    attribution: "© NASA EOSDIS GIBS",
+    noWrap: false, // Permite "dar a volta" na Terra
   },
 };
 

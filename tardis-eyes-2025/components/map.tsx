@@ -1,11 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
-import { MapContainer, TileLayer, useMap, useMapEvents } from "react-leaflet";
+import { useEffect } from "react";
+import {
+  MapContainer,
+  TileLayer,
+  useMap,
+  useMapEvents,
+  Marker,
+  Popup,
+} from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { getPlanetConfig } from "@/lib/planet-config";
-import { RoverAnimation } from "@/lib/rover-animation";
 
 interface MapProps {
   currentPlanet: "moon" | "mars" | "earth";
@@ -13,44 +19,72 @@ interface MapProps {
   onCenterChange: (center: L.LatLng) => void;
 }
 
-function MapEvents({ onMove, onPositionSelect }: { 
+// Componente para atualizar a camada do mapa dinamicamente
+function MapLayer({
+  currentPlanet,
+}: {
+  currentPlanet: MapProps["currentPlanet"];
+}) {
+  const map = useMap();
+  const planetConfig = getPlanetConfig(currentPlanet);
+
+  useEffect(() => {
+    const tileLayer = L.tileLayer(planetConfig.tileUrl, {
+      attribution: planetConfig.attribution,
+      maxZoom: planetConfig.maxZoom,
+      noWrap: planetConfig.noWrap,
+    });
+
+    // Limpa camadas antigas e adiciona a nova
+    map.eachLayer((layer) => {
+      if (layer instanceof L.TileLayer) {
+        map.removeLayer(layer);
+      }
+    });
+    tileLayer.addTo(map);
+
+    map.setZoom(planetConfig.zoom);
+    map.panTo(planetConfig.center);
+
+    if (planetConfig.bounds) {
+      map.setMaxBounds(planetConfig.bounds);
+    } else {
+      map.setMaxBounds(null);
+    }
+  }, [currentPlanet, map, planetConfig]);
+
+  return null;
+}
+
+function MapEvents({
+  onMove,
+  onPositionSelect,
+}: {
   onMove: (center: L.LatLng) => void;
   onPositionSelect: (position: L.LatLng) => void;
 }) {
   const map = useMapEvents({
-    move: () => {
-      onMove(map.getCenter());
-    },
-    click: (e) => {
-      onPositionSelect(e.latlng);
-    },
+    move: () => onMove(map.getCenter()),
+    click: (e) => onPositionSelect(e.latlng),
   });
 
   return null;
 }
 
-export function Map({ currentPlanet, onPositionSelect, onCenterChange }: MapProps) {
-  const roverRef = useRef<RoverAnimation | null>(null);
+export function Map({
+  currentPlanet,
+  onPositionSelect,
+  onCenterChange,
+}: MapProps) {
   const planetConfig = getPlanetConfig(currentPlanet);
-
-  const handleMapLoad = useCallback((map: L.Map) => {
-    if (!roverRef.current) {
-      roverRef.current = new RoverAnimation(map);
-    }
-  }, []);
 
   return (
     <MapContainer
-      center={[0, 0]}
-      zoom={3}
+      center={planetConfig.center}
+      zoom={planetConfig.zoom}
       className="w-full h-full"
-      ref={handleMapLoad}
     >
-      <TileLayer
-        attribution={planetConfig.attribution}
-        url={planetConfig.tileUrl}
-        maxZoom={planetConfig.maxZoom}
-      />
+      <MapLayer currentPlanet={currentPlanet} />
       <MapEvents onMove={onCenterChange} onPositionSelect={onPositionSelect} />
     </MapContainer>
   );

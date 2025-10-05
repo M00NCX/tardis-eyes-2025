@@ -29,7 +29,9 @@ export function PlanetNavigation({
   onPlanetChange,
 }: PlanetNavigationProps) {
   return (
-    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[1000] bg-background/95 backdrop-blur-md rounded-full px-3 py-2 shadow-xl border border-border/50 flex items-center gap-3">
+    // CORREÇÃO: Aumentado o z-index para um valor muito alto (z-[99999])
+    // para garantir que ele fique sobreposto a todos os outros elementos.
+    <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[99999] bg-background/95 backdrop-blur-md rounded-full px-3 py-2 shadow-xl border border-border/50 flex items-center gap-3">
       {Object.entries(planetInfo).map(([key, info]) => (
         <Button
           key={key}

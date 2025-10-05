@@ -1,187 +1,182 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
-import dynamic from "next/dynamic";
+import { useEffect, useRef } from "react";
+import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { RoverAnimation } from "@/lib/rover-animation";
+import { getPlanetConfig } from "@/lib/planet-config";
+
+// --- Tipos de Dados ---
+interface Annotation {
+  id: string;
+  lat: number;
+  lng: number;
+  title: string;
+  description: string;
+  author: string;
+  is_historical?: boolean;
+}
+type AnimationState =
+  | { status: "idle" }
+  | { status: "animating"; from: L.LatLng; to: L.LatLng }
+  | { status: "placing_flag"; at: L.LatLng };
 
 interface Props {
   highlightedAnnotationId?: string | null;
   currentPlanet: "moon" | "mars" | "earth";
-  onSelectPosition: (position: { lat: number; lng: number }) => void;
-  annotations: any[];
-  tourPoints: any[];
-  onSelectAnnotation: (annotation: any) => void;
+  onSelectPositionForAnnotation: (position: L.LatLng) => void;
+  onSelectAnnotation: (annotation: Annotation) => void;
+  annotations: Annotation[];
+  roverPosition: L.LatLng | null;
+  onRoverPositionChange: (position: L.LatLng) => void;
+  animationState: AnimationState;
+  onAnimationComplete: (position: L.LatLng) => void;
 }
 
-const createRoverIcon = (rotation: number = 0) =>
+// --- Ícones Customizados ---
+const createIcon = (url: string, className: string = "") =>
   L.divIcon({
-    className: "custom-rover-marker",
-    html: `<img src="/rover.png" alt="Rover" class="h-10 w-10" style="transform: rotate(${rotation}deg); transition: transform 0.3s ease-in-out;" />`,
+    html: `<img src="${url}" alt="marker" />`,
+    className: `custom-marker ${className}`,
     iconSize: [40, 40],
-    iconAnchor: [20, 20],
+    iconAnchor: url.includes("rover") ? [20, 20] : [12, 40],
+    popupAnchor: [0, -40],
   });
 
-const createFlagIcon = (isFixed: boolean) =>
-  L.divIcon({
-    className: isFixed ? "custom-flag-fixed" : "custom-flag-marker",
-    html: `<img src="${
-      isFixed ? "/flag-fixed.png" : "/flag-marker.png"
-    }" alt="Bandeira" class="h-10 w-10" style="transition: all 0.3s ease-in-out;" />`,
-    iconSize: [40, 40],
-    iconAnchor: [20, 40],
-  });
+const roverIcon = createIcon("/rover.png", "custom-rover-marker");
+const flagMarkerIcon = createIcon("/flag-marker.png", "custom-flag-marker");
+const flagFixedIcon = createIcon("/flag-fixed.png", "custom-flag-fixed");
 
 export default function MapComponent({
   highlightedAnnotationId,
   currentPlanet,
-  onSelectPosition,
-  annotations,
-  tourPoints,
+  onSelectPositionForAnnotation,
   onSelectAnnotation,
+  annotations,
+  roverPosition,
+  onRoverPositionChange,
+  animationState,
+  onAnimationComplete,
 }: Props) {
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const roverMarkerRef = useRef<L.Marker | null>(null);
-  const isAnimating = useRef<boolean>(false);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
+  const roverMarkerRef = useRef<L.Marker | null>(null);
+  const roverAnimationRef = useRef<RoverAnimation | null>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
 
-  // Effect para inicializar o mapa
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
-      mapRef.current = L.map(mapContainerRef.current, {
+      const map = L.map(mapContainerRef.current, {
         zoomControl: true,
         preferCanvas: true,
-      });
-
-      mapRef.current.on("click", (e) => {
-        if (e.originalEvent.ctrlKey || e.originalEvent.metaKey) {
-          onSelectPosition({ lat: e.latlng.lat, lng: e.latlng.lng });
-        }
-      });
+      }).setView([0, 0], 2);
+      map.on("dblclick", (e) => onSelectPositionForAnnotation(e.latlng));
+      mapRef.current = map;
+      roverAnimationRef.current = new RoverAnimation(map);
     }
+  }, [onSelectPositionForAnnotation]);
 
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [onSelectPosition]);
-
-  // Effect para atualizar o mapa quando mudar de planeta
   useEffect(() => {
-    if (!mapRef.current) return;
+    const map = mapRef.current;
+    if (!map) return;
+    if (tileLayerRef.current) map.removeLayer(tileLayerRef.current);
 
-    if (tileLayerRef.current) {
-      mapRef.current.removeLayer(tileLayerRef.current);
-    }
+    const config = getPlanetConfig(currentPlanet);
+    tileLayerRef.current = L.tileLayer(config.tileUrl, {
+      attribution: config.attribution,
+      minZoom: 1, // Permite afastar bastante para ver o globo
+      maxZoom: config.maxZoom,
+      noWrap: config.noWrap,
+    }).addTo(map);
 
-    let tileUrl = "";
-    let attribution = "";
-
-    switch (currentPlanet) {
-      case "mars":
-        tileUrl =
-          "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.png";
-        attribution = "© NASA/JPL/USGS";
-        break;
-      case "earth":
-        tileUrl =
-          "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_ShadedRelief_Bathymetry/default/EPSG3857_500m/{z}/{y}/{x}.jpeg";
-        attribution = "© NASA Earth Observatory";
-        break;
-      case "moon":
-      default:
-        tileUrl =
-          "https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/{z}/{y}/{x}.jpg";
-        attribution = "© NASA/GSFC/ASU";
-        break;
-    }
-
-    const bounds = L.latLngBounds([
-      [-90, -180],
-      [90, 180],
-    ]);
-
-    tileLayerRef.current = L.tileLayer(tileUrl, {
-      bounds,
-      noWrap: true,
-      attribution,
-      minZoom: 1,
-      maxZoom: 8,
-      tileSize: 256,
-    }).addTo(mapRef.current);
-
-    mapRef.current.fitBounds(bounds);
-    mapRef.current.setZoom(currentPlanet === "earth" ? 3 : 2);
+    map.setZoom(config.zoom);
   }, [currentPlanet]);
 
-  // Effect para atualizar marcadores quando annotations mudarem
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (roverPosition && !roverMarkerRef.current) {
+      roverMarkerRef.current = L.marker(roverPosition, {
+        icon: roverIcon,
+        zIndexOffset: 1000,
+      }).addTo(map);
+      roverAnimationRef.current?.setMarker(roverMarkerRef.current);
+    }
+    if (roverMarkerRef.current) {
+      if (animationState.status === "idle")
+        roverMarkerRef.current.setIcon(roverIcon);
+      if (roverPosition && animationState.status !== "animating")
+        roverMarkerRef.current.setLatLng(roverPosition);
+    }
+  }, [roverPosition, animationState.status]);
+
+  useEffect(() => {
+    const rover = roverMarkerRef.current;
+    if (!rover || !roverAnimationRef.current) return;
+
+    if (animationState.status === "animating") {
+      rover.setIcon(roverIcon);
+      rover.getPane()?.classList.remove("marker-pulse"); // Garante que não está pulsando
+      roverAnimationRef.current.start({
+        startPosition: animationState.from,
+        endPosition: animationState.to,
+        duration: 2000,
+        onComplete: () => {
+          onRoverPositionChange(animationState.to);
+          onAnimationComplete(animationState.to);
+        },
+      });
+    } else if (animationState.status === "placing_flag") {
+      rover.setIcon(flagMarkerIcon);
+      rover.setLatLng(animationState.at);
+      // Efeito de pulsação para chamar atenção
+      rover.getPane()?.classList.add("marker-pulse");
+
+      const timer = setTimeout(() => {
+        if (roverMarkerRef.current?.getLatLng().equals(animationState.at)) {
+          roverMarkerRef.current.setIcon(flagFixedIcon);
+          roverMarkerRef.current.getPane()?.classList.remove("marker-pulse");
+        }
+      }, 4000);
+      return () => clearTimeout(timer);
+    } else {
+      rover.getPane()?.classList.remove("marker-pulse");
+    }
+  }, [animationState, onAnimationComplete, onRoverPositionChange]);
+
   useEffect(() => {
     if (!mapRef.current) return;
-
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current.clear();
-
     annotations.forEach((annotation) => {
-      const marker = L.marker([annotation.lat, annotation.lng], {
-        icon: createFlagIcon(!!annotation.is_historical),
-      })
-        .bindPopup(
-          `
-        <div class="p-2 max-w-xs">
-          <h3 class="font-semibold text-base mb-1">${annotation.title} ${
-            annotation.is_historical ? "(Marco Histórico)" : ""
-          }</h3>
-          <p class="text-sm text-muted-foreground mb-2">${
-            annotation.description
-          }</p>
-          <p class="text-xs text-muted-foreground">Por: ${annotation.author}</p>
-        </div>
-      `
-        )
-        .addTo(mapRef.current!);
-
+      const icon = annotation.is_historical ? flagFixedIcon : flagMarkerIcon;
+      const marker = L.marker([annotation.lat, annotation.lng], { icon }).addTo(
+        mapRef.current!
+      ).bindPopup(`
+          <div class="p-1 max-w-xs">
+            <h3 class="font-semibold text-base mb-1">${annotation.title}</h3>
+            <p class="text-sm text-muted-foreground mb-2">${annotation.description}</p>
+            <p class="text-xs text-muted-foreground">Por: ${annotation.author}</p>
+          </div>
+        `);
       marker.on("click", () => onSelectAnnotation(annotation));
       markersRef.current.set(annotation.id, marker);
     });
+  }, [annotations, onSelectAnnotation]);
 
-    if (tourPoints.length > 0) {
-      const firstPoint = tourPoints.sort((a, b) => a.order - b.order)[0];
-      if (roverMarkerRef.current) {
-        roverMarkerRef.current.setLatLng([firstPoint.lat, firstPoint.lng]);
-      } else {
-        roverMarkerRef.current = L.marker([firstPoint.lat, firstPoint.lng], {
-          icon: createRoverIcon(0),
-          zIndexOffset: 1000,
-        }).addTo(mapRef.current);
-      }
-    } else if (roverMarkerRef.current) {
-      roverMarkerRef.current.remove();
-      roverMarkerRef.current = null;
-    }
-  }, [annotations, tourPoints, onSelectAnnotation]);
-
-  // Effect para destacar anotação selecionada
   useEffect(() => {
-    if (highlightedAnnotationId && annotations.length > 0 && mapRef.current) {
-      const annotationToHighlight = annotations.find(
-        (ann) => ann.id === highlightedAnnotationId
-      );
-      if (annotationToHighlight) {
-        mapRef.current.flyTo(
-          [annotationToHighlight.lat, annotationToHighlight.lng],
-          5,
-          { duration: 1.5 }
-        );
+    if (highlightedAnnotationId && mapRef.current) {
+      const point = annotations.find((a) => a.id === highlightedAnnotationId);
+      if (point) {
+        mapRef.current.flyTo([point.lat, point.lng], 5, { duration: 1 });
         setTimeout(() => {
-          const marker = markersRef.current.get(annotationToHighlight.id);
+          const marker = markersRef.current.get(point.id);
           marker?.openPopup();
-        }, 1600);
+        }, 1100);
       }
     }
   }, [highlightedAnnotationId, annotations]);
 
-  return <div ref={mapContainerRef} className="h-full w-full" />;
+  return <div ref={mapContainerRef} className="h-full w-full bg-black" />;
 }

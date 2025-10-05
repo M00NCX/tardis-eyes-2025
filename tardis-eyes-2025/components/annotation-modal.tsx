@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,50 +10,68 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 
 interface AnnotationModalProps {
-  open: boolean
-  onOpenChange: (open: boolean) => void
-  onSubmit: (data: { title: string; description: string; author: string }) => void
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  onSubmit: (data: {
+    title: string;
+    description: string;
+    author: string;
+  }) => void;
 }
 
-export function AnnotationModal({ open, onOpenChange, onSubmit }: AnnotationModalProps) {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [author, setAuthor] = useState("")
+export function AnnotationModal({
+  open,
+  onOpenChange,
+  onSubmit,
+}: AnnotationModalProps) {
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [author, setAuthor] = useState("");
+
+  // Limpa os campos quando o modal é fechado
+  useEffect(() => {
+    if (!open) {
+      setTitle("");
+      setDescription("");
+      setAuthor("");
+    }
+  }, [open]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (title && description && author) {
-      onSubmit({ title, description, author })
-      setTitle("")
-      setDescription("")
-      setAuthor("")
+      onSubmit({ title, description, author });
     }
-  }
+  };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="top-[30%] translate-y-[-50%]">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
-            <DialogTitle>Nova Anotação</DialogTitle>
+            {/* CORREÇÃO: Textos mais diretos e claros */}
+            <DialogTitle className="text-2xl">
+              Registre sua Descoberta
+            </DialogTitle>
             <DialogDescription>
-              Adicione uma anotação para compartilhar sua descoberta com outros exploradores.
+              Detalhe o que você encontrou neste local. Sua anotação será
+              marcada com a bandeira no mapa.
             </DialogDescription>
           </DialogHeader>
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Título</Label>
+              <Label htmlFor="title">Título da Descoberta</Label>
               <Input
                 id="title"
-                placeholder="Ex: Cratera interessante"
+                placeholder="Ex: Formação rochosa curiosa"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -67,16 +85,16 @@ export function AnnotationModal({ open, onOpenChange, onSubmit }: AnnotationModa
                 placeholder="Descreva o que você encontrou..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                rows={4}
+                rows={3}
                 required
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="author">Seu nome</Label>
+              <Label htmlFor="author">Seu Nome de Explorador(a)</Label>
               <Input
                 id="author"
-                placeholder="Como você quer ser chamado?"
+                placeholder="Como você quer ser creditado(a)?"
                 value={author}
                 onChange={(e) => setAuthor(e.target.value)}
                 required
@@ -85,13 +103,17 @@ export function AnnotationModal({ open, onOpenChange, onSubmit }: AnnotationModa
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
-            <Button type="submit">Criar Anotação</Button>
+            <Button type="submit">Plantar Bandeira</Button>
           </DialogFooter>
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
