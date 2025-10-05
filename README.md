@@ -21,7 +21,6 @@ https://www.tardisgroup.us/
 - 🛰️ **Tours Guiados Históricos:** Faça um tour guiado pelos locais mais importantes da exploração espacial, como os pousos das missões Apollo e as crateras exploradas pelos rovers da NASA.
 - 🤖 **Rover Interativo:** Acompanhe um rover virtual que se move pelo mapa, conectando os pontos de interesse de forma animada.
 - 🎨 **Painel Intuitivo:** Gerencie e filtre todas as anotações e marcos históricos em um painel lateral elegante e funcional.
-- 🖥️ **Design Responsivo:** Uma experiência de uso agradável tanto no desktop quanto em dispositivos móveis.
 
 ---
 
