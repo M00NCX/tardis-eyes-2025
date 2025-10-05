@@ -42,19 +42,23 @@ export const planetConfigs: PlanetConfigs = {
     zoom: 3,
     minZoom: 1,
     maxZoom: 12,
+    // Mapa base global colorido (MOLA)
     tileUrl:
-      "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.png",
+      "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
+    // Fallback: mosaic Viking (caso o MOLA falhe)
     fallbackTileUrl:
-      "https://trek.nasa.gov/tiles/Mars/EQ/CTX_Mosaic_Global_32ppd_v1/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
+      "https://trek.nasa.gov/tiles/Mars/EQ/Mars_MGS_MOLA_ClrShade_merge_global_463m/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
+    // Camada de nomes oficiais (rótulos)
     labelUrl:
-      "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Nomenclature/1.0.0/default/default028mm/{z}/{y}/{x}.png",
-    attribution: "© NASA/JPL/USGS - Mars Reconnaissance Orbiter (CTX/HiRISE)",
+      "https://trek.nasa.gov/tiles/Mars/EQ/Mars_MOLA_Nomenclature/1.0.0/default/default028mm/{z}/{y}/{x}.png",
+    attribution:
+      "© NASA/JPL/USGS - Mars Reconnaissance Orbiter (MOLA, Viking, HiRISE)",
     noWrap: true,
     bounds: [
       [-90, -180],
       [90, 180],
     ],
-  },
+  },  
   earth: {
     center: [0, 0],
     zoom: 3,

@@ -3,7 +3,7 @@ interface NasaApiConfig {
   apiKey: string;
 }
 
-const NASA_API_KEY = "DEMO_KEY"; // Substitua por sua chave API da NASA (https://api.nasa.gov)
+const NASA_API_KEY = "DEMO_KEY";
 
 export const nasaApiConfig: Record<string, NasaApiConfig> = {
   moon: {
