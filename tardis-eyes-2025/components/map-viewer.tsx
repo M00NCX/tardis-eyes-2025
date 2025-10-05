@@ -11,8 +11,7 @@ import { AnnotationModal } from './annotation-modal';
 import { TourControl } from './tour-control';
 import { Button } from './ui/button';
 import { PanelLeftClose, PanelRightClose } from 'lucide-react';
-
-import { Annotation, TourPoint, PlanetType } from '@/types';
+import { Annotation, TourPoint } from '@/types';
 
 type AnimationState =
   | { status: 'idle' }
@@ -59,7 +58,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
         fetch(`/api/annotations?planet=${currentPlanet}`),
         fetch(`/api/tour-points?planet=${currentPlanet}`),
       ]);
-      const annotationsData = await annotationsRes.json();
+      const annotationsData: Annotation[] = await annotationsRes.json();
       const tourPointsData: TourPoint[] = await tourPointsRes.json();
       setAnnotations(annotationsData);
       setTourPoints(tourPointsData);
@@ -70,7 +69,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
     } catch (error) {
       console.error('Falha ao buscar dados:', error);
     }
-  }, [currentPlanet, roverPosition]);
+  }, [currentPlanet]);
 
   useEffect(() => {
     fetchData();
@@ -91,7 +90,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
   };
 
   const onAnimationComplete = (position: L.LatLng) => {
-    setAnimationState({ status: 'placing_flag', at: position });
+    setRoverPosition(position);
     setAnimationState({ status: 'idle' });
   };
 
@@ -171,10 +170,6 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
           onSelectAnnotation={handleSelectAnnotation}
           open={isPanelVisible}
           onToggleVisibility={() => setIsPanelVisible(false)}
-          mode={'list'}
-          onModeChange={() => {}}
-          onCreateAnnotation={() => {}}
-          position={null}
         />
       </div>
 

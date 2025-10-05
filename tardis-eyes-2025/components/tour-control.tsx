@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { ChevronLeft, ChevronRight, Play, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { ChevronLeft, ChevronRight, Play, X } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface TourPoint {
   id: string;
@@ -13,6 +13,7 @@ interface TourPoint {
   title: string;
   description: string;
   order: number;
+  planet: 'moon' | 'mars' | 'earth';
 }
 
 interface TourControlProps {
@@ -103,10 +104,10 @@ export function TourControl({
                 <div
                   key={index}
                   className={cn(
-                    "h-1.5 w-1.5 rounded-full transition-all",
+                    'h-1.5 w-1.5 rounded-full transition-all',
                     index === currentIndex
-                      ? "w-4 bg-primary"
-                      : "bg-muted-foreground/30"
+                      ? 'w-4 bg-primary'
+                      : 'bg-muted-foreground/30'
                   )}
                 />
               ))}

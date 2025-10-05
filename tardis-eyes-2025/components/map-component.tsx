@@ -6,18 +6,10 @@ import 'leaflet/dist/leaflet.css';
 import { RoverAnimation } from '@/lib/rover-animation';
 import { getPlanetConfig } from '@/lib/planet-config';
 import { useMapLayers } from '@/hooks/use-map-layers';
+import { Annotation, TourPoint } from '@/types';
 
 // --- Tipos de Dados ---
-interface Annotation {
-  id: string;
-  lat: number;
-  lng: number;
-  title: string;
-  description: string;
-  author: string;
-  is_historical?: boolean;
-  planet: string;
-}
+
 type AnimationState =
   | { status: 'idle' }
   | { status: 'animating'; from: L.LatLng; to: L.LatLng }
@@ -27,8 +19,8 @@ interface Props {
   highlightedAnnotationId?: string | null;
   currentPlanet: 'moon' | 'mars' | 'earth';
   onSelectPositionForAnnotation: (position: L.LatLng) => void;
-  onSelectAnnotation: (annotation: Annotation) => void;
-  annotations: Annotation[];
+  onSelectAnnotation: (annotation: Annotation | TourPoint) => void;
+  annotations: (Annotation | TourPoint)[];
   roverPosition: L.LatLng | null;
   onRoverPositionChange: (position: L.LatLng) => void;
   animationState: AnimationState;
@@ -169,16 +161,31 @@ export default function MapComponent({
     markersRef.current.forEach((marker) => marker.remove());
     markersRef.current.clear();
     annotations.forEach((annotation) => {
-      const icon = annotation.is_historical ? flagFixedIcon : flagMarkerIcon;
-      const marker = L.marker([annotation.lat, annotation.lng], { icon }).addTo(
-        mapRef.current!
-      ).bindPopup(`
-          <div class="p-1 max-w-xs">
-            <h3 class="font-semibold text-base mb-1">${annotation.title}</h3>
-            <p class="text-sm text-muted-foreground mb-2">${annotation.description}</p>
-            <p class="text-xs text-muted-foreground">Por: ${annotation.author}</p>
-          </div>
-        `);
+      const icon =
+        'is_historical' in annotation && annotation.is_historical
+          ? flagFixedIcon
+          : flagMarkerIcon;
+
+      const popupContent =
+        'author' in annotation
+          ? `
+        <div class="p-1 max-w-xs">
+          <h3 class="font-semibold text-base mb-1">${annotation.title}</h3>
+          <p class="text-sm text-muted-foreground mb-2">${annotation.description}</p>
+          <p class="text-xs text-muted-foreground">Por: ${annotation.author}</p>
+        </div>
+      `
+          : `
+        <div class="p-1 max-w-xs">
+          <h3 class="font-semibold text-base mb-1">${annotation.title}</h3>
+          <p class="text-sm text-muted-foreground mb-2">${annotation.description}</p>
+        </div>
+      `;
+
+      const marker = L.marker([annotation.lat, annotation.lng], { icon })
+        .addTo(mapRef.current!)
+        .bindPopup(popupContent);
+
       marker.on('click', () => onSelectAnnotation(annotation));
       markersRef.current.set(annotation.id, marker);
     });

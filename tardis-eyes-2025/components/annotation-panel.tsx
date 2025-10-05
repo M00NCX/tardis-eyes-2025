@@ -5,6 +5,7 @@ import { Card } from '@/components/ui/card';
 import { MapPin, User, Calendar, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from './ui/button';
+import { TourPoint } from '@/types';
 
 // --- Tipos de Dados ---
 interface Annotation {
@@ -16,12 +17,13 @@ interface Annotation {
   author: string;
   created_at: string;
   is_historical?: boolean;
+  planet: 'moon' | 'mars' | 'earth';
 }
 
 // --- Interface de Props Atualizada ---
 interface AnnotationPanelProps {
   annotations: Annotation[];
-  onSelectAnnotation: (annotation: Annotation) => void;
+  onSelectAnnotation: (annotation: Annotation | TourPoint) => void;
   open: boolean;
   onToggleVisibility: () => void; // Nova prop para fechar o painel
 }
