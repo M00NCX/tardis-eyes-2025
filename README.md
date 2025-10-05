@@ -10,9 +10,7 @@ O **TARDIS Atlas** é uma aplicação web interativa, inspirada na exploração 
 
 Os exploradores podem navegar por marcos históricos, como os locais de pouso das missões Apollo e as rotas dos rovers marcianos, ou deixar suas próprias marcas, criando anotações e compartilhando pontos de interesse com a comunidade.
 
-⚠️ **Nota:** Não se esqueça de adicionar uma captura de tela da sua aplicação aqui para um impacto visual!
-
-![Demonstração do TARDIS Atlas](caminho/para/sua/imagem.png)
+https://www.tardisgroup.us/
 
 ---
 
@@ -72,8 +70,8 @@ Os exploradores podem navegar por marcos históricos, como os locais de pouso da
 Clone o repositório:
 
 ```bash
-git clone [link-para-seu-repositorio]
-cd tardis-atlas
+git clone https://github.com/M00NCX/tardis-voyager/
+cd tardis-voyager
 ```
 
 ````
