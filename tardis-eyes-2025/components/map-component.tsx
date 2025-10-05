@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { RoverAnimation } from "@/lib/rover-animation";
 import { getPlanetConfig } from "@/lib/planet-config";
+import { useMapLayers } from "@/hooks/use-map-layers";
 
 // --- Tipos de Dados ---
 interface Annotation {
@@ -47,6 +48,8 @@ const roverIcon = createIcon("/rover.png", "custom-rover-marker");
 const flagMarkerIcon = createIcon("/flag-marker.png", "custom-flag-marker");
 const flagFixedIcon = createIcon("/flag-fixed.png", "custom-flag-fixed");
 
+// Estilos movidos para globals.css
+
 export default function MapComponent({
   highlightedAnnotationId,
   currentPlanet,
@@ -58,40 +61,50 @@ export default function MapComponent({
   animationState,
   onAnimationComplete,
 }: Props) {
+  // Estado para controlar o carregamento das camadas
+  const [layersLoaded, setLayersLoaded] = useState(false);
+  const [lastTileUrl, setLastTileUrl] = useState<string | null>(null);
   const mapRef = useRef<L.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const markersRef = useRef<Map<string, L.Marker>>(new Map());
   const roverMarkerRef = useRef<L.Marker | null>(null);
   const roverAnimationRef = useRef<RoverAnimation | null>(null);
-  const tileLayerRef = useRef<L.TileLayer | null>(null);
 
   useEffect(() => {
     if (mapContainerRef.current && !mapRef.current) {
+      const config = getPlanetConfig(currentPlanet);
+      console.debug(
+        "[MapComponent] Initializing map for",
+        currentPlanet,
+        config
+      );
       const map = L.map(mapContainerRef.current, {
         zoomControl: true,
         preferCanvas: true,
-      }).setView([0, 0], 2);
+        minZoom: config.minZoom,
+        maxZoom: config.maxZoom,
+        maxBounds: config.bounds ? L.latLngBounds(config.bounds) : undefined,
+        maxBoundsViscosity: 1.0,
+      }).setView(config.center, config.zoom);
+
       map.on("dblclick", (e) => onSelectPositionForAnnotation(e.latlng));
       mapRef.current = map;
       roverAnimationRef.current = new RoverAnimation(map);
+      // small timeout to ensure container sizing
+      setTimeout(() => {
+        try {
+          map.invalidateSize();
+        } catch (e) {}
+      }, 50);
     }
-  }, [onSelectPositionForAnnotation]);
+  }, [onSelectPositionForAnnotation, currentPlanet]);
 
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-    if (tileLayerRef.current) map.removeLayer(tileLayerRef.current);
-
-    const config = getPlanetConfig(currentPlanet);
-    tileLayerRef.current = L.tileLayer(config.tileUrl, {
-      attribution: config.attribution,
-      minZoom: 1, // Permite afastar bastante para ver o globo
-      maxZoom: config.maxZoom,
-      noWrap: config.noWrap,
-    }).addTo(map);
-
-    map.setZoom(config.zoom);
-  }, [currentPlanet]);
+  // Gerenciamento de camadas do mapa (passa TMS e callback)
+  useMapLayers({
+    map: mapRef.current,
+    currentPlanet,
+    onTileRequest: (url) => setLastTileUrl(url),
+  });
 
   useEffect(() => {
     const map = mapRef.current;
@@ -117,7 +130,7 @@ export default function MapComponent({
 
     if (animationState.status === "animating") {
       rover.setIcon(roverIcon);
-      rover.getPane()?.classList.remove("marker-pulse"); // Garante que não está pulsando
+      rover.getPane()?.classList.remove("marker-pulse");
       roverAnimationRef.current.start({
         startPosition: animationState.from,
         endPosition: animationState.to,
@@ -130,7 +143,6 @@ export default function MapComponent({
     } else if (animationState.status === "placing_flag") {
       rover.setIcon(flagMarkerIcon);
       rover.setLatLng(animationState.at);
-      // Efeito de pulsação para chamar atenção
       rover.getPane()?.classList.add("marker-pulse");
 
       const timer = setTimeout(() => {
@@ -178,5 +190,9 @@ export default function MapComponent({
     }
   }, [highlightedAnnotationId, annotations]);
 
-  return <div ref={mapContainerRef} className="h-full w-full bg-black" />;
+  return (
+    <div className="w-full h-full relative">
+      <div ref={mapContainerRef} className="w-full h-full" />
+    </div>
+  );
 }

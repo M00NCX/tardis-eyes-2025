@@ -29,33 +29,39 @@ export function PlanetNavigation({
   onPlanetChange,
 }: PlanetNavigationProps) {
   return (
-    // CORREÇÃO: Aumentado o z-index para um valor muito alto (z-[99999])
-    // para garantir que ele fique sobreposto a todos os outros elementos.
     <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[99999] bg-background/95 backdrop-blur-md rounded-full px-3 py-2 shadow-xl border border-border/50 flex items-center gap-3">
-      {Object.entries(planetInfo).map(([key, info]) => (
-        <Button
-          key={key}
-          variant={currentPlanet === key ? "secondary" : "ghost"}
-          className={cn(
-            "rounded-full p-1 transition-all hover:scale-110 hover:bg-secondary/50",
-            currentPlanet === key &&
-              "bg-secondary/80 shadow-inner ring-2 ring-primary ring-offset-2 ring-offset-background"
-          )}
-          onClick={() => onPlanetChange(key as "moon" | "mars" | "earth")}
-        >
-          <div className="relative w-12 h-12 overflow-hidden">
-            <Image
-              src={info.image}
-              alt={info.name}
-              width={48}
-              height={48}
-              className="w-full h-full object-cover rounded-full"
-              priority
-            />
-            <span className="sr-only">{info.name}</span>
-          </div>
-        </Button>
-      ))}
+      {Object.entries(planetInfo).map(([key, info]) => {
+        const isCurrent = currentPlanet === key;
+        return (
+          <Button
+            key={key}
+            variant={isCurrent ? "secondary" : "ghost"}
+            className={cn(
+              "rounded-full h-auto p-2 flex flex-col items-center transition-all hover:scale-110 hover:bg-secondary/50",
+              isCurrent &&
+                "bg-secondary/80 shadow-inner ring-2 ring-primary ring-offset-2 ring-offset-background"
+            )}
+            onClick={() => onPlanetChange(key as "moon" | "mars" | "earth")}
+          >
+            <div
+              className={cn(
+                "relative overflow-hidden rounded-full",
+                isCurrent ? "w-14 h-14" : "w-12 h-12"
+              )}
+            >
+              <Image
+                src={info.image}
+                alt={info.name}
+                width={isCurrent ? 56 : 48}
+                height={isCurrent ? 56 : 48}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
+            <span className="text-xs mt-1">{info.name}</span>
+          </Button>
+        );
+      })}
     </div>
   );
 }

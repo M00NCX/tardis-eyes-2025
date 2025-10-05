@@ -19,14 +19,18 @@ type AnimationState =
   | { status: "animating"; from: L.LatLng; to: L.LatLng }
   | { status: "placing_flag"; at: L.LatLng };
 
-// Importação dinâmica do mapa com ClientOnly
-import ClientOnly from "./client-only";
+// Importação dinâmica do mapa
 const MapComponentWithNoSSR = dynamic(() => import("./map-component"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-background">
-      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      <p className="ml-4 text-muted-foreground">Carregando mapa...</p>
+    <div className="w-full h-full flex flex-col items-center justify-center bg-background">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mb-4"></div>
+      <p className="text-lg font-semibold text-foreground mb-2">
+        Carregando Mapa
+      </p>
+      <p className="text-sm text-muted-foreground text-center max-w-md">
+        Conectando com as APIs da NASA para exibir imagens de alta resolução...
+      </p>
     </div>
   ),
 });
@@ -78,12 +82,12 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
   };
 
   const handleSelectPositionForAnnotation = (position: L.LatLng) => {
-    if (animationState.status !== "idle" || !roverPosition) return;
+    if (animationState.status !== "idle") return;
     setAnimationState({
-      status: "animating",
-      from: roverPosition,
-      to: position,
+      status: "placing_flag",
+      at: position,
     });
+    setShowAnnotationModal(true);
   };
 
   const onAnimationComplete = (position: L.LatLng) => {
@@ -153,8 +157,24 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
           onAnimationComplete={onAnimationComplete}
         />
 
-        {/* --- CORREÇÃO: BOTÃO MOVIDO PARA A DIREITA E ÍCONE AJUSTADO --- */}
-        <div className="absolute bottom-4 right-4 z-[1001]">
+        {/* Botões de controle */}
+        <div className="absolute bottom-4 right-4 z-[1001] flex flex-col gap-3">
+          {/* Botão principal para adicionar anotação */}
+          <Button
+            onClick={() => {
+              setAnimationState({
+                status: "placing_flag",
+                at: new L.LatLng(0, 0),
+              });
+              setShowAnnotationModal(true);
+            }}
+            className="shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 rounded-full font-semibold"
+            size="lg"
+          >
+            Escrever Anotação
+          </Button>
+
+          {/* Botão para mostrar/esconder painel */}
           <Button
             variant="outline"
             size="icon"
@@ -196,6 +216,11 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
           }
         }}
         onSubmit={handleCreateAnnotation}
+        position={
+          animationState.status === "placing_flag"
+            ? { lat: animationState.at.lat, lng: animationState.at.lng }
+            : null
+        }
       />
     </div>
   );

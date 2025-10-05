@@ -5,7 +5,8 @@ export interface Annotation {
   title: string;
   description: string;
   author: string;
-  created_at?: string;
+  created_at: string;
+  planet: "moon" | "mars" | "earth";
   is_historical?: boolean;
 }
 
@@ -16,6 +17,7 @@ export interface TourPoint {
   title: string;
   description: string;
   order: number;
+  planet: "moon" | "mars" | "earth";
 }
 
 export type PlanetType = "moon" | "mars" | "earth";

@@ -24,12 +24,14 @@ interface AnnotationModalProps {
     description: string;
     author: string;
   }) => void;
+  position?: { lat: number; lng: number } | null;
 }
 
 export function AnnotationModal({
   open,
   onOpenChange,
   onSubmit,
+  position,
 }: AnnotationModalProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -53,7 +55,7 @@ export function AnnotationModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="top-[30%] translate-y-[-50%]">
+      <DialogContent className="top-[30%] translate-y-[-50%] max-w-md mx-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader>
             {/* CORREÇÃO: Textos mais diretos e claros */}
@@ -63,6 +65,12 @@ export function AnnotationModal({
             <DialogDescription>
               Detalhe o que você encontrou neste local. Sua anotação será
               marcada com a bandeira no mapa.
+              {position && (
+                <div className="mt-2 p-2 bg-muted rounded text-sm font-mono">
+                  📍 Posição: {position.lat.toFixed(4)},{" "}
+                  {position.lng.toFixed(4)}
+                </div>
+              )}
             </DialogDescription>
           </DialogHeader>
 

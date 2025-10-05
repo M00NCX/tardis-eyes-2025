@@ -16,7 +16,7 @@ interface Annotation {
 let annotations: Annotation[] = [
   // Marcos Históricos da Lua
   {
-    id: "t1_moon",
+    id: "h1_moon",
     lat: 0.67408,
     lng: 23.47297,
     title: "Pouso da Apollo 11",
@@ -27,45 +27,8 @@ let annotations: Annotation[] = [
     planet: "moon",
     is_historical: true,
   },
-  // Marcos Históricos de Marte
   {
-    id: "t1_mars",
-    lat: -1.9462,
-    lng: 354.4734,
-    title: "Pouso do Perseverance",
-    description:
-      "Local de pouso do rover Perseverance em Marte, na cratera Jezero.",
-    author: "NASA",
-    created_at: new Date("2021-02-18").toISOString(),
-    planet: "mars",
-    is_historical: true,
-  },
-  {
-    id: "t2_mars",
-    lat: -4.5895,
-    lng: 137.4417,
-    title: "Cratera Gale - Curiosity",
-    description:
-      "Local onde o rover Curiosity estuda a geologia e o clima de Marte desde 2012.",
-    author: "NASA",
-    created_at: new Date("2012-08-06").toISOString(),
-    planet: "mars",
-    is_historical: true,
-  },
-  // Marcos Históricos da Terra
-  {
-    id: "t1_earth",
-    lat: 28.5728,
-    lng: -80.649,
-    title: "Centro Espacial Kennedy",
-    description: "Principal centro de lançamentos espaciais da NASA.",
-    author: "NASA",
-    created_at: new Date("1962-07-01").toISOString(),
-    planet: "earth",
-    is_historical: true,
-  },
-  {
-    id: "t2_moon",
+    id: "h2_moon",
     lat: -3.01239,
     lng: -23.42157,
     title: "Pouso da Apollo 12",
@@ -77,7 +40,7 @@ let annotations: Annotation[] = [
     is_historical: true,
   },
   {
-    id: "t3_moon",
+    id: "h3_moon",
     lat: 20.1908,
     lng: 30.7723,
     title: "Pouso da Apollo 17",
@@ -91,7 +54,7 @@ let annotations: Annotation[] = [
 
   // Marcos Históricos de Marte
   {
-    id: "t1_mars",
+    id: "h1_mars",
     lat: 19.33,
     lng: 335.79,
     title: "Pouso da Viking 1",
@@ -103,7 +66,7 @@ let annotations: Annotation[] = [
     is_historical: true,
   },
   {
-    id: "t2_mars",
+    id: "h2_mars",
     lat: -4.5895,
     lng: 137.4417,
     title: "Cratera Gale (Curiosity)",
@@ -115,7 +78,7 @@ let annotations: Annotation[] = [
     is_historical: true,
   },
   {
-    id: "t3_mars",
+    id: "h3_mars",
     lat: 18.444,
     lng: 77.451,
     title: "Cratera Jezero (Perseverance)",
@@ -129,7 +92,18 @@ let annotations: Annotation[] = [
 
   // Marcos Históricos da Terra
   {
-    id: "t1_earth",
+    id: "h1_earth",
+    lat: 28.5728,
+    lng: -80.649,
+    title: "Centro Espacial Kennedy",
+    description: "Principal centro de lançamentos espaciais da NASA.",
+    author: "NASA",
+    created_at: new Date("1962-07-01").toISOString(),
+    planet: "earth",
+    is_historical: true,
+  },
+  {
+    id: "h2_earth",
     lat: 27.9881,
     lng: 86.925,
     title: "Monte Everest",
@@ -141,7 +115,7 @@ let annotations: Annotation[] = [
     is_historical: true,
   },
   {
-    id: "t2_earth",
+    id: "h3_earth",
     lat: -22.9519,
     lng: -43.2105,
     title: "Cristo Redentor",
@@ -153,7 +127,7 @@ let annotations: Annotation[] = [
     is_historical: true,
   },
   {
-    id: "t3_earth",
+    id: "h4_earth",
     lat: 48.8584,
     lng: 2.2945,
     title: "Torre Eiffel",
@@ -177,7 +151,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json(filteredAnnotations);
   }
 
-  // Se nenhum planeta for especificado, retorna todas (ou pode retornar um erro)
   return NextResponse.json(annotations);
 }
 
@@ -199,7 +172,7 @@ export async function POST(request: NextRequest) {
       author,
       created_at: new Date().toISOString(),
       planet,
-      is_historical: false,
+      is_historical: true, // Todas as anotações criadas pelo usuário são marcadas como históricas
     };
 
     annotations.push(newAnnotation);

@@ -22,36 +22,6 @@ const allTourPoints: TourPoint[] = [
     order: 1,
     planet: "moon",
   },
-  // Pontos de Tour de Marte
-  {
-    id: "t1_mars",
-    lat: -1.9462,
-    lng: 354.4734,
-    title: "Perseverance",
-    description:
-      "Cratera Jezero - Local de busca por sinais de vida antiga em Marte",
-    order: 1,
-    planet: "mars",
-  },
-  {
-    id: "t2_mars",
-    lat: -4.5895,
-    lng: 137.4417,
-    title: "Curiosity",
-    description: "Monte Sharp - Análise da história geológica de Marte",
-    order: 2,
-    planet: "mars",
-  },
-  // Pontos de Tour da Terra
-  {
-    id: "t1_earth",
-    lat: 28.5728,
-    lng: -80.649,
-    title: "Kennedy Space Center",
-    description: "Centro histórico de lançamentos espaciais da NASA",
-    order: 1,
-    planet: "earth",
-  },
   {
     id: "t2_moon",
     lat: -3.01239,
@@ -105,31 +75,40 @@ const allTourPoints: TourPoint[] = [
   // Pontos de Tour da Terra (Marcos Geográficos)
   {
     id: "t1_earth",
-    lat: 27.9881,
-    lng: 86.925,
-    title: "Monte Everest",
-    description: "O ponto mais alto da Terra, um desafio monumental.",
+    lat: 28.5728,
+    lng: -80.649,
+    title: "Kennedy Space Center",
+    description: "Centro histórico de lançamentos espaciais da NASA",
     order: 1,
     planet: "earth",
   },
   {
     id: "t2_earth",
-    lat: -22.9519,
-    lng: -43.2105,
-    title: "Cristo Redentor",
-    description:
-      "Um ícone do Brasil, com uma vista deslumbrante do Rio de Janeiro.",
+    lat: 27.9881,
+    lng: 86.925,
+    title: "Monte Everest",
+    description: "O ponto mais alto da Terra, um desafio monumental.",
     order: 2,
     planet: "earth",
   },
   {
     id: "t3_earth",
+    lat: -22.9519,
+    lng: -43.2105,
+    title: "Cristo Redentor",
+    description:
+      "Um ícone do Brasil, com uma vista deslumbrante do Rio de Janeiro.",
+    order: 3,
+    planet: "earth",
+  },
+  {
+    id: "t4_earth",
     lat: 48.8584,
     lng: 2.2945,
     title: "Torre Eiffel",
     description:
       "O símbolo de Paris e uma maravilha da engenharia do século XIX.",
-    order: 3,
+    order: 4,
     planet: "earth",
   },
 ];

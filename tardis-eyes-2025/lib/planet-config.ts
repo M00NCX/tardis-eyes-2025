@@ -4,6 +4,8 @@ interface PlanetConfig {
   maxZoom: number;
   minZoom?: number;
   tileUrl: string;
+  fallbackTileUrl?: string; // URL de fallback caso a principal falhe
+  labelUrl?: string; // Nova propriedade para a camada de nomes
   attribution: string;
   bounds?: [number, number][];
   noWrap?: boolean;
@@ -18,36 +20,58 @@ interface PlanetConfigs {
 export const planetConfigs: PlanetConfigs = {
   moon: {
     center: [0, 0],
-    zoom: 2,
+    zoom: 3,
     minZoom: 1,
-    maxZoom: 8,
-    // URL oficial do WMTS da NASA para a Lua
+    maxZoom: 12,
+    // Usar o mosaic WAC global (formato {z}/{y}/{x} compatível com Leaflet)
     tileUrl:
       "https://trek.nasa.gov/tiles/Moon/EQ/LRO_WAC_Mosaic_Global_303ppd_v02/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
-    attribution: "© NASA / GSFC / ASU",
+    fallbackTileUrl:
+      "https://trek.nasa.gov/tiles/Moon/EQ/LRO_NAC_ClrShade_19S070E_150cmp/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
+    labelUrl:
+      "https://trek.nasa.gov/tiles/Moon/EQ/LRO_NAC_Nomenclature/1.0.0/default/default028mm/{z}/{y}/{x}.png",
+    attribution: "© NASA/GSFC/ASU - Lunar Reconnaissance Orbiter",
     noWrap: true,
+    bounds: [
+      [-90, -180],
+      [90, 180],
+    ],
   },
   mars: {
     center: [0, 0],
-    zoom: 2,
+    zoom: 3,
     minZoom: 1,
-    maxZoom: 8,
-    // URL oficial do Mars Reconnaissance Orbiter da NASA
+    maxZoom: 12,
     tileUrl:
-      "https://api.nasa.gov/mars-wmts/mars/Mars_MGS_MOLA_DEM_mosaic_global_463m/default/default028mm/{z}/{y}/{x}.png?api_key=DEMO_KEY",
-    attribution: "© NASA / JPL / USGS",
+      "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Viking_MDIM21_ClrMosaic_global_232m/1.0.0/default/default028mm/{z}/{y}/{x}.png",
+    fallbackTileUrl:
+      "https://trek.nasa.gov/tiles/Mars/EQ/CTX_Mosaic_Global_32ppd_v1/1.0.0/default/default028mm/{z}/{y}/{x}.jpg",
+    labelUrl:
+      "https://trek.nasa.gov/tiles/Mars/EQ/Mars_Nomenclature/1.0.0/default/default028mm/{z}/{y}/{x}.png",
+    attribution: "© NASA/JPL/USGS - Mars Reconnaissance Orbiter (CTX/HiRISE)",
     noWrap: true,
+    bounds: [
+      [-90, -180],
+      [90, 180],
+    ],
   },
   earth: {
     center: [0, 0],
-    zoom: 2,
+    zoom: 3,
     minZoom: 1,
-    maxZoom: 9,
-    // URL oficial do NASA GIBS (Global Imagery Browse Services)
+    maxZoom: 13,
     tileUrl:
-      "https://gibs-{s}.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
-    attribution: "© NASA EOSDIS GIBS",
-    noWrap: false, // Permite "dar a volta" na Terra
+      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg",
+    fallbackTileUrl:
+      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg",
+    labelUrl:
+      "https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Reference_Labels/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png",
+    attribution: "© NASA Earth Observatory (VIIRS/SNPP)",
+    noWrap: false,
+    bounds: [
+      [-85, -180],
+      [85, 180],
+    ],
   },
 };
 
