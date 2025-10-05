@@ -73,8 +73,6 @@ git clone https://github.com/M00NCX/tardis-voyager/
 cd tardis-voyager
 ```
 
-````
-
 Instale as dependências:
 
 ```bash
