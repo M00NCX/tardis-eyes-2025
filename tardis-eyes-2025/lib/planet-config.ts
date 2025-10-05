@@ -57,7 +57,7 @@
       maxZoom: 8,
       tileUrl: `/api/proxy?url=https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/VIIRS_SNPP_CorrectedReflectance_TrueColor/default/{time}/GoogleMapsCompatible_Level9/{z}/{y}/{x}.jpg`,
       fallbackTileUrl: `/api/proxy?url=https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg`,
-      labelUrl: `/api/proxy?url=https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/Reference_Labels/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.png`,
+      labelUrl: `/api/proxy?url=https://gibs.earthdata.nasa.gov/wmts/epsg3857/best/BlueMarble_NextGeneration/default/GoogleMapsCompatible_Level8/{z}/{y}/{x}.jpg`,
       attribution: "© NASA Earth Observatory (VIIRS/SNPP)",
       noWrap: false,
       bounds: [
