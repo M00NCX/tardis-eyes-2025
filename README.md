@@ -123,6 +123,4 @@ Este projeto está sob a licença **MIT**. Veja o arquivo `LICENSE` para mais de
 
 ---
 
-Desenvolvido com ❤️ pela equipe <b>TARDIS</b>.
-
-````
+Desenvolvido com ❤️ pela equipe <b>TARDIS</b> para o NASA SPACE APP CHALLENGE 2025.
