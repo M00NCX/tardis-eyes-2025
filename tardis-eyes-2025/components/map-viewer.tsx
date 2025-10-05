@@ -91,7 +91,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
 
   const onAnimationComplete = (position: L.LatLng) => {
     setAnimationState({ status: 'placing_flag', at: position });
-    setShowAnnotationModal(true);
+    setAnimationState({ status: 'idle'});
   };
 
   // 1. CORREÇÃO: A função handleCreateAnnotation foi removida daqui.
@@ -178,6 +178,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
       </div>
 
       {/* 2. CORREÇÃO: Passando as props corretas para o Modal */}
+      
       <AnnotationModal
         open={showAnnotationModal}
         onOpenChange={(isOpen) => {
@@ -186,7 +187,6 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
             setAnimationState({ status: 'idle' });
           }
         }}
-        // A prop `onSubmit` foi substituída pela `onCreated`, que chama a função fetchData.
         onCreated={fetchData}
         position={
           animationState.status === 'placing_flag'
@@ -194,7 +194,8 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
             : null
         }
         planet={currentPlanet}
-      />
+      /> 
+     
     </div>
   );
 }

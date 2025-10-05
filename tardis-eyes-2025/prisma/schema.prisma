@@ -1,10 +1,10 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
-}
-
-generator client {
-  provider = "prisma-client-js"
 }
 
 model Annotation {
@@ -15,8 +15,8 @@ model Annotation {
   description   String
   author        String
   created_at    DateTime @default(now())
-  planet        String
   is_historical Boolean  @default(false)
+  planet        String
 
   @@index([planet])
 }
