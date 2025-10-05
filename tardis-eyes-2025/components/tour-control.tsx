@@ -70,14 +70,11 @@ export function TourControl({
           Iniciar Tour Guiado
         </Button>
       ) : (
-        <Card className="w-96 max-w-[90vw] border-border bg-card/95 p-4 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-card/80">
+        <Card className="w-80 max-w-[80vw] border-border bg-card/95 p-2 shadow-2xl backdrop-blur supports-[backdrop-filter]:bg-card/80">
           <div className="mb-3 flex items-start justify-between">
             <div className="flex-1 pr-2">
-              <div className="mb-1 text-xs text-muted-foreground">
-                Ponto {currentIndex + 1} de {sortedPoints.length}
-              </div>
-              <h3 className="text-lg font-semibold text-foreground">
-                {currentPoint?.title}
+              <h3 className="flex  justify-center text-lg font-semibold text-foreground">
+                Parada {currentIndex + 1} de {sortedPoints.length}
               </h3>
             </div>
             <Button
@@ -89,10 +86,6 @@ export function TourControl({
               <X className="h-4 w-4" />
             </Button>
           </div>
-
-          <p className="mb-4 text-sm text-muted-foreground line-clamp-2">
-            {currentPoint?.description}
-          </p>
 
           <div className="flex items-center justify-between">
             <Button variant="outline" size="sm" onClick={handlePrevious}>
