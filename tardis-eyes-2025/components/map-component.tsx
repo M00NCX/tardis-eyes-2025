@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useRef, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { RoverAnimation } from "@/lib/rover-animation";
-import { getPlanetConfig } from "@/lib/planet-config";
-import { useMapLayers } from "@/hooks/use-map-layers";
+import { useEffect, useRef, useState } from 'react';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import { RoverAnimation } from '@/lib/rover-animation';
+import { getPlanetConfig } from '@/lib/planet-config';
+import { useMapLayers } from '@/hooks/use-map-layers';
 
 // --- Tipos de Dados ---
 interface Annotation {
@@ -16,15 +16,16 @@ interface Annotation {
   description: string;
   author: string;
   is_historical?: boolean;
+  planet: string;
 }
 type AnimationState =
-  | { status: "idle" }
-  | { status: "animating"; from: L.LatLng; to: L.LatLng }
-  | { status: "placing_flag"; at: L.LatLng };
+  | { status: 'idle' }
+  | { status: 'animating'; from: L.LatLng; to: L.LatLng }
+  | { status: 'placing_flag'; at: L.LatLng };
 
 interface Props {
   highlightedAnnotationId?: string | null;
-  currentPlanet: "moon" | "mars" | "earth";
+  currentPlanet: 'moon' | 'mars' | 'earth';
   onSelectPositionForAnnotation: (position: L.LatLng) => void;
   onSelectAnnotation: (annotation: Annotation) => void;
   annotations: Annotation[];
@@ -35,18 +36,18 @@ interface Props {
 }
 
 // --- Ícones Customizados ---
-const createIcon = (url: string, className: string = "") =>
+const createIcon = (url: string, className: string = '') =>
   L.divIcon({
     html: `<img src="${url}" alt="marker" />`,
     className: `custom-marker ${className}`,
     iconSize: [40, 40],
-    iconAnchor: url.includes("rover") ? [20, 20] : [12, 40],
+    iconAnchor: url.includes('rover') ? [20, 20] : [12, 40],
     popupAnchor: [0, -40],
   });
 
-const roverIcon = createIcon("/rover.png", "custom-rover-marker");
-const flagMarkerIcon = createIcon("/flag-marker.png", "custom-flag-marker");
-const flagFixedIcon = createIcon("/flag-fixed.png", "custom-flag-fixed");
+const roverIcon = createIcon('/rover.png', 'custom-rover-marker');
+const flagMarkerIcon = createIcon('/flag-marker.png', 'custom-flag-marker');
+const flagFixedIcon = createIcon('/flag-fixed.png', 'custom-flag-fixed');
 
 // Estilos movidos para globals.css
 
@@ -74,7 +75,7 @@ export default function MapComponent({
     if (mapContainerRef.current && !mapRef.current) {
       const config = getPlanetConfig(currentPlanet);
       console.debug(
-        "[MapComponent] Initializing map for",
+        '[MapComponent] Initializing map for',
         currentPlanet,
         config
       );
@@ -83,17 +84,17 @@ export default function MapComponent({
         preferCanvas: true,
         minZoom: config.minZoom,
         maxZoom: config.maxZoom,
-      
+
         // Controle de zoom
-        zoomSnap: 0.5,             // zoom em passos inteiros
-        zoomDelta: 0.5,            // cada rolagem do scroll
-        wheelPxPerZoomLevel: 180,  // suavidade do zoom
-      
+        zoomSnap: 0.5, // zoom em passos inteiros
+        zoomDelta: 0.5, // cada rolagem do scroll
+        wheelPxPerZoomLevel: 180, // suavidade do zoom
+
         maxBounds: config.bounds ? L.latLngBounds(config.bounds) : undefined,
         maxBoundsViscosity: 1.0,
       }).setView(config.center, config.zoom);
 
-      map.on("dblclick", (e) => onSelectPositionForAnnotation(e.latlng));
+      map.on('dblclick', (e) => onSelectPositionForAnnotation(e.latlng));
       mapRef.current = map;
       roverAnimationRef.current = new RoverAnimation(map);
       // small timeout to ensure container sizing
@@ -123,9 +124,9 @@ export default function MapComponent({
       roverAnimationRef.current?.setMarker(roverMarkerRef.current);
     }
     if (roverMarkerRef.current) {
-      if (animationState.status === "idle")
+      if (animationState.status === 'idle')
         roverMarkerRef.current.setIcon(roverIcon);
-      if (roverPosition && animationState.status !== "animating")
+      if (roverPosition && animationState.status !== 'animating')
         roverMarkerRef.current.setLatLng(roverPosition);
     }
   }, [roverPosition, animationState.status]);
@@ -134,9 +135,9 @@ export default function MapComponent({
     const rover = roverMarkerRef.current;
     if (!rover || !roverAnimationRef.current) return;
 
-    if (animationState.status === "animating") {
+    if (animationState.status === 'animating') {
       rover.setIcon(roverIcon);
-      rover.getPane()?.classList.remove("marker-pulse");
+      rover.getPane()?.classList.remove('marker-pulse');
       roverAnimationRef.current.start({
         startPosition: animationState.from,
         endPosition: animationState.to,
@@ -146,20 +147,20 @@ export default function MapComponent({
           onAnimationComplete(animationState.to);
         },
       });
-    } else if (animationState.status === "placing_flag") {
+    } else if (animationState.status === 'placing_flag') {
       rover.setIcon(flagMarkerIcon);
       rover.setLatLng(animationState.at);
-      rover.getPane()?.classList.add("marker-pulse");
+      rover.getPane()?.classList.add('marker-pulse');
 
       const timer = setTimeout(() => {
         if (roverMarkerRef.current?.getLatLng().equals(animationState.at)) {
           roverMarkerRef.current.setIcon(flagFixedIcon);
-          roverMarkerRef.current.getPane()?.classList.remove("marker-pulse");
+          roverMarkerRef.current.getPane()?.classList.remove('marker-pulse');
         }
       }, 4000);
       return () => clearTimeout(timer);
     } else {
-      rover.getPane()?.classList.remove("marker-pulse");
+      rover.getPane()?.classList.remove('marker-pulse');
     }
   }, [animationState, onAnimationComplete, onRoverPositionChange]);
 
@@ -178,7 +179,7 @@ export default function MapComponent({
             <p class="text-xs text-muted-foreground">Por: ${annotation.author}</p>
           </div>
         `);
-      marker.on("click", () => onSelectAnnotation(annotation));
+      marker.on('click', () => onSelectAnnotation(annotation));
       markersRef.current.set(annotation.id, marker);
     });
   }, [annotations, onSelectAnnotation]);

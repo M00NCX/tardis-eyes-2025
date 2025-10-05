@@ -19,7 +19,6 @@ type AnimationState =
   | { status: 'animating'; from: L.LatLng; to: L.LatLng }
   | { status: 'placing_flag'; at: L.LatLng };
 
-// Importação dinâmica do mapa
 const MapComponentWithNoSSR = dynamic(() => import('./map-component'), {
   ssr: false,
   loading: () => (
@@ -95,34 +94,8 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
     setShowAnnotationModal(true);
   };
 
-  const handleCreateAnnotation = async (data: {
-    title: string;
-    description: string;
-    author: string;
-  }) => {
-    if (animationState.status !== 'placing_flag') return;
-
-    try {
-      const response = await fetch('/api/annotations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...data,
-          lat: animationState.at.lat,
-          lng: animationState.at.lng,
-          planet: currentPlanet,
-        }),
-      });
-      if (response.ok) {
-        await fetchData();
-      }
-    } catch (error) {
-      console.error('Falha ao criar anotação:', error);
-    } finally {
-      setShowAnnotationModal(false);
-      setAnimationState({ status: 'idle' });
-    }
-  };
+  // 1. CORREÇÃO: A função handleCreateAnnotation foi removida daqui.
+  // A responsabilidade de criar a anotação agora é inteiramente do AnnotationModal.
 
   const handleSelectAnnotation = (annotation: Annotation | TourPoint) => {
     setHighlightedAnnotationId(annotation.id);
@@ -157,9 +130,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
           onAnimationComplete={onAnimationComplete}
         />
 
-        {/* Botões de controle */}
         <div className="absolute bottom-4 right-4 z-[1001] flex flex-col gap-3">
-          {/* Botão principal para adicionar anotação */}
           <Button
             onClick={() => {
               setAnimationState({
@@ -174,7 +145,6 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
             Escrever Anotação
           </Button>
 
-          {/* Botão para mostrar/esconder painel */}
           <Button
             variant="outline"
             size="icon"
@@ -207,6 +177,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
         />
       </div>
 
+      {/* 2. CORREÇÃO: Passando as props corretas para o Modal */}
       <AnnotationModal
         open={showAnnotationModal}
         onOpenChange={(isOpen) => {
@@ -215,12 +186,14 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
             setAnimationState({ status: 'idle' });
           }
         }}
-        onSubmit={handleCreateAnnotation}
+        // A prop `onSubmit` foi substituída pela `onCreated`, que chama a função fetchData.
+        onCreated={fetchData}
         position={
           animationState.status === 'placing_flag'
             ? { lat: animationState.at.lat, lng: animationState.at.lng }
             : null
         }
+        planet={currentPlanet}
       />
     </div>
   );

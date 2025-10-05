@@ -1,185 +1,110 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { prisma } from '@/lib/prisma';
 
-interface Annotation {
-  id: string;
-  lat: number;
-  lng: number;
-  title: string;
-  description: string;
-  author: string;
-  created_at: string;
-  planet: "moon" | "mars" | "earth";
-  is_historical?: boolean;
-}
+// 1. ESQUEMA DE VALIDAÇÃO COM ZOD
+// Define um "contrato" para os dados que esperamos receber.
+// Isso garante que os dados estão no formato correto antes de tentarmos salvar no banco.
+const annotationSchema = z.object({
+  lat: z.number({ invalid_type_error: 'Latitude inválida.' }),
+  lng: z.number({ invalid_type_error: 'Longitude inválida.' }),
+  title: z
+    .string()
+    .min(3, { message: 'O título deve ter pelo menos 3 caracteres.' })
+    .max(100, { message: 'O título não pode ter mais de 100 caracteres.' }),
+  description: z
+    .string()
+    .min(10, { message: 'A descrição deve ter pelo menos 10 caracteres.' }),
+  author: z
+    .string()
+    .min(2, { message: 'O nome do autor deve ter pelo menos 2 caracteres.' })
+    .max(50, {
+      message: 'O nome do autor não pode ter mais de 50 caracteres.',
+    }),
+  planet: z.string().min(1, { message: 'O planeta é obrigatório.' }),
+});
 
-// Base de dados simulada
-let annotations: Annotation[] = [
-  // Marcos Históricos da Lua
-  {
-    id: "h1_moon",
-    lat: 0.67408,
-    lng: 23.47297,
-    title: "Pouso da Apollo 11",
-    description:
-      "Local do primeiro pouso lunar tripulado em 20 de julho de 1969. 'Um pequeno passo para o homem, um salto gigante para a humanidade.'",
-    author: "NASA",
-    created_at: new Date("1969-07-20").toISOString(),
-    planet: "moon",
-    is_historical: true,
-  },
-  {
-    id: "h2_moon",
-    lat: -3.01239,
-    lng: -23.42157,
-    title: "Pouso da Apollo 12",
-    description:
-      "Nesta missão, os astronautas pousaram perto da sonda Surveyor 3, que havia chegado à Lua dois anos antes.",
-    author: "NASA",
-    created_at: new Date("1969-11-19").toISOString(),
-    planet: "moon",
-    is_historical: true,
-  },
-  {
-    id: "h3_moon",
-    lat: 20.1908,
-    lng: 30.7723,
-    title: "Pouso da Apollo 17",
-    description:
-      "A última missão do programa Apollo, que levou o geólogo Harrison Schmitt à Lua.",
-    author: "NASA",
-    created_at: new Date("1972-12-11").toISOString(),
-    planet: "moon",
-    is_historical: true,
-  },
-
-  // Marcos Históricos de Marte
-  {
-    id: "h1_mars",
-    lat: 19.33,
-    lng: 335.79,
-    title: "Pouso da Viking 1",
-    description:
-      "Primeira sonda americana a pousar com sucesso em Marte e realizar sua missão.",
-    author: "NASA",
-    created_at: new Date("1976-07-20").toISOString(),
-    planet: "mars",
-    is_historical: true,
-  },
-  {
-    id: "h2_mars",
-    lat: -4.5895,
-    lng: 137.4417,
-    title: "Cratera Gale (Curiosity)",
-    description:
-      "Local de pouso do rover Curiosity, que explora a geologia e o clima do planeta.",
-    author: "NASA",
-    created_at: new Date("2012-08-06").toISOString(),
-    planet: "mars",
-    is_historical: true,
-  },
-  {
-    id: "h3_mars",
-    lat: 18.444,
-    lng: 77.451,
-    title: "Cratera Jezero (Perseverance)",
-    description:
-      "Local de pouso do rover Perseverance, buscando sinais de vida microbiana antiga.",
-    author: "NASA",
-    created_at: new Date("2021-02-18").toISOString(),
-    planet: "mars",
-    is_historical: true,
-  },
-
-  // Marcos Históricos da Terra
-  {
-    id: "h1_earth",
-    lat: 28.5728,
-    lng: -80.649,
-    title: "Centro Espacial Kennedy",
-    description: "Principal centro de lançamentos espaciais da NASA.",
-    author: "NASA",
-    created_at: new Date("1962-07-01").toISOString(),
-    planet: "earth",
-    is_historical: true,
-  },
-  {
-    id: "h2_earth",
-    lat: 27.9881,
-    lng: 86.925,
-    title: "Monte Everest",
-    description:
-      "O pico mais alto da Terra, atingindo 8.848 metros acima do nível do mar.",
-    author: "Geografia",
-    created_at: new Date().toISOString(),
-    planet: "earth",
-    is_historical: true,
-  },
-  {
-    id: "h3_earth",
-    lat: -22.9519,
-    lng: -43.2105,
-    title: "Cristo Redentor",
-    description:
-      "Monumento icônico no Rio de Janeiro, Brasil, uma das Novas Sete Maravilhas do Mundo.",
-    author: "Cultura",
-    created_at: new Date().toISOString(),
-    planet: "earth",
-    is_historical: true,
-  },
-  {
-    id: "h4_earth",
-    lat: 48.8584,
-    lng: 2.2945,
-    title: "Torre Eiffel",
-    description:
-      "Um marco de treliça de ferro forjado em Paris, França, e um ícone cultural global.",
-    author: "História",
-    created_at: new Date().toISOString(),
-    planet: "earth",
-    is_historical: true,
-  },
-];
-
-export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const planet = searchParams.get("planet") as "moon" | "mars" | "earth" | null;
-
-  if (planet) {
-    const filteredAnnotations = annotations.filter(
-      (ann) => ann.planet === planet
-    );
-    return NextResponse.json(filteredAnnotations);
-  }
-
-  return NextResponse.json(annotations);
-}
-
-export async function POST(request: NextRequest) {
+export async function GET(req: NextRequest) {
   try {
-    const body = await request.json();
-    const { lat, lng, title, description, author, planet } = body;
+    // 1. Pega os parâmetros da URL da requisição (ex: ?planet=mars)
+    const { searchParams } = req.nextUrl;
+    const planet = searchParams.get('planet');
 
-    if (!lat || !lng || !title || !description || !author || !planet) {
-      return NextResponse.json({ error: "Dados incompletos" }, { status: 400 });
+    // 2. Validação: se o parâmetro 'planet' não for enviado, retorna um erro.
+    if (!planet) {
+      return NextResponse.json(
+        { error: "O parâmetro 'planet' é obrigatório." },
+        { status: 400 } // 400 Bad Request
+      );
     }
 
-    const newAnnotation: Annotation = {
-      id: `user-${Date.now()}`,
-      lat,
-      lng,
-      title,
-      description,
-      author,
-      created_at: new Date().toISOString(),
-      planet,
-      is_historical: true, // Todas as anotações criadas pelo usuário são marcadas como históricas
-    };
+    // 3. Busca no banco de dados usando o Prisma
+    // Encontra todas as anotações (`findMany`) onde (`where`) o campo `planet`
+    // seja igual ao valor que recebemos na URL.
+    const annotations = await prisma.annotation.findMany({
+      where: {
+        planet: planet,
+      },
+    });
 
-    annotations.push(newAnnotation);
-    return NextResponse.json(newAnnotation, { status: 201 });
+    // 4. Retorna os dados encontrados como JSON
+    return NextResponse.json(annotations);
   } catch (error) {
+    console.error('GET /api/annotations error:', error);
     return NextResponse.json(
-      { error: "Falha ao criar anotação" },
+      { error: 'Falha ao buscar as anotações.' },
+      { status: 500 } // 500 Internal Server Error
+    );
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    // 2. VALIDANDO O CORPO DA REQUISIÇÃO
+    // Usamos `safeParse` para validar o `body` contra o nosso esquema.
+    // Se a validação falhar, `success` será `false` e `error` conterá os detalhes.
+    const validation = annotationSchema.safeParse(body);
+
+    if (!validation.success) {
+      // O `zod` nos dá um objeto de erro bem formatado.
+      // Podemos enviá-lo diretamente para o frontend.
+      return NextResponse.json(
+        {
+          error: 'Dados inválidos.',
+          details: validation.error.flatten().fieldErrors,
+        },
+        { status: 422 } // 422 Unprocessable Entity é o status ideal para erros de validação
+      );
+    }
+
+    // Se a validação passou, podemos usar `validation.data` com segurança,
+    // pois sabemos que todos os campos existem e têm o tipo correto.
+    const { lat, lng, title, description, author, planet } = validation.data;
+
+    const annotation = await prisma.annotation.create({
+      data: {
+        lat,
+        lng,
+        title,
+        description,
+        author,
+        planet,
+        is_historical: false, // Definido no backend por segurança
+      },
+    });
+
+    return NextResponse.json(annotation, { status: 201 }); // 201 Created
+  } catch (error) {
+    console.error('POST /api/annotations error:', error);
+
+    // Tratamento de erro genérico para o caso do banco de dados falhar, etc.
+    return NextResponse.json(
+      {
+        error:
+          'Não foi possível salvar a anotação. Tente novamente mais tarde.',
+      },
       { status: 500 }
     );
   }

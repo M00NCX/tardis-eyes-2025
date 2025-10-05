@@ -1,7 +1,6 @@
 'use client';
 
 import type React from 'react';
-
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -19,52 +18,98 @@ import { Label } from '@/components/ui/label';
 interface AnnotationModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSubmit: (data: {
-    title: string;
-    description: string;
-    author: string;
-  }) => void;
   position?: { lat: number; lng: number } | null;
+  planet: string;
+  onCreated?: () => void;
 }
 
 export function AnnotationModal({
   open,
   onOpenChange,
-  onSubmit,
   position,
+  planet,
+  onCreated,
 }: AnnotationModalProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [author, setAuthor] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  // Limpa os campos quando o modal é fechado
   useEffect(() => {
     if (!open) {
       setTitle('');
       setDescription('');
       setAuthor('');
     }
+    setError(null);
   }, [open]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (title && description && author) {
-      onSubmit({ title, description, author });
+    if (!position) return;
+
+    setError(null);
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/annotations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          lat: position.lat,
+          lng: position.lng,
+          title,
+          description,
+          author,
+          planet,
+        }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        // O frontend já está preparado para lidar com o objeto de erro do Zod!
+        // O `details` que você tinha vai ser populado automaticamente.
+        if (errorData.details) {
+          const allErrors = Object.values(errorData.details).flat().join('\n');
+          throw new Error(allErrors);
+        }
+
+        const errorMessage = errorData.error || 'Erro ao salvar anotação';
+        throw new Error(errorMessage);
+      }
+
+      onOpenChange(false);
+      if (onCreated) onCreated();
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Não foi possível registrar sua descoberta.');
+      }
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // DICA: Desabilitar o botão de submit se os campos estiverem vazios
+  // melhora a experiência do usuário.
+  const isFormInvalid = !title || !description || !author || loading;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="top-[50%] translate-y-[-50%] max-w-md mx-auto">
-        <form onSubmit={handleSubmit}>
+        {/* Usar `noValidate` é uma boa prática quando você controla a validação via JS */}
+        <form onSubmit={handleSubmit} noValidate>
           <DialogHeader>
-            {/* CORREÇÃO: Textos mais diretos e claros */}
             <DialogTitle className="text-2xl">
               Registre sua Descoberta
             </DialogTitle>
             <DialogDescription>
-              Detalhe o que você encontrou neste local. Sua anotação será
-              marcada com a bandeira no mapa.
+              Detalhe o que você encontrou. Sua anotação será marcada no mapa.
               {position && (
                 <div className="mt-2 p-2 bg-muted rounded text-sm font-mono">
                   📍 Posição: {position.lat.toFixed(4)},{' '}
@@ -85,7 +130,6 @@ export function AnnotationModal({
                 required
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="description">Descrição</Label>
               <Textarea
@@ -97,7 +141,6 @@ export function AnnotationModal({
                 required
               />
             </div>
-
             <div className="space-y-2">
               <Label htmlFor="author">Seu Nome de Explorador(a)</Label>
               <Input
@@ -110,15 +153,25 @@ export function AnnotationModal({
             </div>
           </div>
 
+          {error && (
+            <div className="mb-4 p-3 bg-destructive/20 text-destructive text-sm rounded-md text-center whitespace-pre-line">
+              {error}
+            </div>
+          )}
+
           <DialogFooter>
             <Button
               type="button"
               variant="outline"
               onClick={() => onOpenChange(false)}
+              disabled={loading}
             >
               Cancelar
             </Button>
-            <Button type="submit">Plantar Bandeira</Button>
+            {/* O botão agora usa a variável `isFormInvalid` */}
+            <Button type="submit" disabled={isFormInvalid}>
+              {loading ? 'Salvando...' : 'Plantar Bandeira'}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
