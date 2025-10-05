@@ -21,11 +21,11 @@ export function InfoModal({ open, onOpenChange }: InfoModalProps) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-2xl">
             <Rocket className="h-6 w-6 text-primary" />
-            Bem-vindo ao NASA Explorer
+            Bem-vindo ao TARDIS Voyager
           </DialogTitle>
           <DialogDescription className="text-base">
-            Explore imagens de alta resolução de Marte capturadas pela Mars
-            Reconnaissance Orbiter
+            Explore imagens de alta resolução de Marte, da Lua e da Terra
+            capturadas pela NASA
           </DialogDescription>
         </DialogHeader>
 
@@ -41,7 +41,7 @@ export function InfoModal({ open, onOpenChange }: InfoModalProps) {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Use o mouse para arrastar e a roda para dar zoom. Explore
-                  diferentes regiões de Marte em alta resolução.
+                  diferentes regiões em alta resolução.
                 </p>
               </div>
             </div>
@@ -71,7 +71,7 @@ export function InfoModal({ open, onOpenChange }: InfoModalProps) {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   Explore o mapa para encontrar easter eggs escondidos com
-                  curiosidades sobre Marte e as missões da NASA.
+                  curiosidades e as missões da NASA.
                 </p>
               </div>
             </div>
@@ -82,7 +82,8 @@ export function InfoModal({ open, onOpenChange }: InfoModalProps) {
               <strong className="text-foreground">Sobre as imagens:</strong> As
               imagens são provenientes da Mars Reconnaissance Orbiter (MRO) da
               NASA, que orbita Marte desde 2006 capturando imagens de alta
-              resolução da superfície marciana.
+              resolução da superfície marciana. Assim como Lunar Reconnaissance
+              Orbiter e Earth Observatory
             </p>
           </div>
         </div>
