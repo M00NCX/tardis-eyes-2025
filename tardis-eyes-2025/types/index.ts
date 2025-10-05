@@ -20,6 +20,17 @@ export interface TourPoint {
   planet: 'moon' | 'mars' | 'earth';
 }
 
+export interface EasterEgg {
+  id: string;
+  lat: number;
+  lng: number;
+  title: string;
+  description: string;
+  order: number;
+  planet: 'moon' | 'mars' | 'earth';
+  is_easteregg?: boolean;
+}
+
 export type PlanetType = 'moon' | 'mars' | 'earth';
 
 type InfoModalProps = {

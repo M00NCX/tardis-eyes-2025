@@ -39,6 +39,9 @@ const createIcon = (url: string, className: string = '') =>
 
 const roverIcon = createIcon('/rover.png', 'custom-rover-marker');
 const flagMarkerIcon = createIcon('/flag-marker.png', 'custom-flag-marker');
+const flagEasterEggIcon = createIcon(
+  '/flag-easteregg.png', 'custom-easteregg-marker'
+);
 const flagFixedIcon = createIcon('/flag-fixed.png', 'custom-flag-fixed');
 
 // Estilos movidos para globals.css
@@ -162,9 +165,12 @@ export default function MapComponent({
     markersRef.current.clear();
     annotations.forEach((annotation) => {
       const icon =
-        'is_historical' in annotation && annotation.is_historical
-          ? flagFixedIcon
-          : flagMarkerIcon;
+        'is_easteregg' in annotation && annotation.is_easteregg
+          ? flagEasterEggIcon
+          :
+            'is_historical' in annotation && annotation.is_historical
+              ? flagFixedIcon
+              : flagMarkerIcon;
 
       const popupContent =
         'author' in annotation

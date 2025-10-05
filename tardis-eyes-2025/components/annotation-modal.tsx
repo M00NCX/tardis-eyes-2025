@@ -102,7 +102,7 @@ export function AnnotationModal({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="top-[50%] translate-y-[-50%] max-w-md mx-auto">
-        {/* Usar `noValidate` é uma boa prática quando você controla a validação via JS */}
+        
         <form onSubmit={handleSubmit} noValidate>
           <DialogHeader>
             <DialogTitle className="text-2xl">

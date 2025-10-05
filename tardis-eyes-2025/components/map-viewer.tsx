@@ -11,7 +11,7 @@ import { AnnotationModal } from './annotation-modal';
 import { TourControl } from './tour-control';
 import { Button } from './ui/button';
 import { PanelLeftClose, PanelRightClose } from 'lucide-react';
-import { Annotation, TourPoint } from '@/types';
+import { Annotation, TourPoint, EasterEgg } from '@/types';
 
 type AnimationState =
   | { status: 'idle' }
@@ -41,6 +41,7 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
   const router = useRouter();
   const [annotations, setAnnotations] = useState<Annotation[]>([]);
   const [tourPoints, setTourPoints] = useState<TourPoint[]>([]);
+  const [easterEggs, setEasterEggs] = useState<EasterEgg[]>([]);
   const [showAnnotationModal, setShowAnnotationModal] = useState(false);
   const [highlightedAnnotationId, setHighlightedAnnotationId] = useState<
     string | null
@@ -50,18 +51,22 @@ export function MapViewer({ currentPlanet }: MapViewerProps) {
     status: 'idle',
   });
   const [isPanelVisible, setIsPanelVisible] = useState(true);
-  const allPointsToDisplay = [...annotations, ...tourPoints];
+  const allPointsToDisplay = [...annotations, ...tourPoints, ...easterEggs];
 
   const fetchData = useCallback(async () => {
     try {
-      const [annotationsRes, tourPointsRes] = await Promise.all([
+      const [annotationsRes, tourPointsRes, easterEggsRes] = await Promise.all([
         fetch(`/api/annotations?planet=${currentPlanet}`),
         fetch(`/api/tour-points?planet=${currentPlanet}`),
+        fetch(`/api/easter-eggs?planet=${currentPlanet}`),
       ]);
       const annotationsData: Annotation[] = await annotationsRes.json();
       const tourPointsData: TourPoint[] = await tourPointsRes.json();
+      const easterEggsData: EasterEgg[] = await easterEggsRes.json();
       setAnnotations(annotationsData);
       setTourPoints(tourPointsData);
+      setEasterEggs(easterEggsData);
+
       if (tourPointsData.length > 0 && !roverPosition) {
         const firstPoint = tourPointsData.sort((a, b) => a.order - b.order)[0];
         setRoverPosition(new L.LatLng(firstPoint.lat, firstPoint.lng));
